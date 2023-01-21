@@ -1,6 +1,6 @@
 #Intro
 [Update] 유튜브강의링크: https://www.youtube.com/watch?v=Z1RJmh_OqeA&ab_channel=freeCodeCamp.org 강의내용중 sqlite db 생성오류건은 유투브강의 아래 코멘트 중에 해결방법 리플되어 있음.
-[런타임 데모] cloudtype.app/
+[런타임 데모] https://port-0-flasqlite-1jx7m2gld1u0xx5.gksl2.cloudtype.app/
 
 
 
