@@ -1,20 +1,33 @@
-# Module Imports
-import mariadb
-import sys
+import psycopg2
+from psycopg2 import Error
 
-# Connect to MariaDB Platform
 try:
-    conn = mariadb.connect(
-        user="jaysys",
-        password="234567",
-        host="svc.gksl2.cloudtype.app:31162",
-        port=3306,
-        database="mydb"
+    # connection = psycopg2.connect(user="chris",
+    #                               password="password",
+    #                               host="127.0.0.1",
+    #                               port="5432",
+    #                               database="postgres")
+    connection = psycopg2.connect(user="jaysys",
+                                password="234567",
+                                host="svc.gksl2.cloudtype.app",
+                                port="30985",
+                                database="mydb")
+    cursor = connection.cursor()
+    # SQL query to create a new table
+    create_table_query = '''CREATE TABLE mobile
+          (ID INT PRIMARY KEY     NOT NULL,
+          MODEL           TEXT    NOT NULL,
+          PRICE         REAL); '''
+    # Execute a command: this creates a new table
+    cursor.execute(create_table_query)
+    connection.commit()
+    print("Table created successfully in PostgreSQL ")
 
-    )
-except mariadb.Error as e:
-    print(f"Error connecting to MariaDB Platform: {e}")
-    sys.exit(1)
+except (Exception, Error) as error:
+    print("Error while connecting to PostgreSQL", error)
+finally:
+    if connection:
+        cursor.close()
+        connection.close()
+        print("PostgreSQL connection is closed")
 
-# Get Cursor
-cur = conn.cursor()
