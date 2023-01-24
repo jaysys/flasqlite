@@ -8,7 +8,7 @@ try:
     #                               port="5432",
     #                               database="postgres")
     connection = psycopg2.connect(user="jaysys",
-                                password="234567",
+                                password="1-234567",
                                 host="svc.gksl2.cloudtype.app",
                                 port="30985",
                                 database="mydb")
