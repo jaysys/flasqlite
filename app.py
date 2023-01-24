@@ -1,10 +1,17 @@
+import os
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
+try:
+    db_conn = os.environ.get('DBCONN')
+    print(db_conn)
+except:
+    pass
+
 app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://jaysys:234567@svc.gksl2.cloudtype.app:30985/mydb'
+app.config['SQLALCHEMY_DATABASE_URI'] = db_conn
 
 with app.app_context():
     db = SQLAlchemy(app)
