@@ -3,6 +3,8 @@ from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
+import pandas as pd
+
 from bokeh.embed import components
 from bokeh.plotting import figure
 from bokeh.resources import INLINE
@@ -74,6 +76,7 @@ def update(id):
     else:
         return render_template('update.html', task=task)
 
+
 @app.route('/meta')
 def meta():
     return render_template('meta.html')
@@ -108,6 +111,25 @@ def bokeh():
     )
     return (html)
     
+
+
+@app.route('/pandas')
+def pandas():
+    #create dataframe
+    df_marks = pd.DataFrame({'name': ['Somu', 'Kiku', 'Amol', 'Lini'],
+        'physics': [68, 74, 77, 78],
+        'chemistry': [84, 56, 73, 69],
+        'algebra': [78, 88, 82, 87]})
+
+    #render dataframe as html
+    html = df_marks.to_html()
+
+    #write html to file
+    text_file = open("templates/pandas.html", "w")
+    text_file.write(html)
+    text_file.close()
+    return render_template('pandas.html')
+
 
 if __name__ == "__main__":
     app.run(debug=True)
