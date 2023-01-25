@@ -1,4 +1,4 @@
-#Intro
+
 ## Intro
 유튜브강의링크: https://www.youtube.com/watch?v=Z1RJmh_OqeA&ab_channel=freeCodeCamp.org 강의내용중 sqlite db 생성오류건은 유투브강의 아래 코멘트 중에 해결방법 리플되어 있음.
 [런타임 데모] https://port-0-flasqlite-1jx7m2gld1u0xx5.gksl2.cloudtype.app/
@@ -14,7 +14,7 @@ CREATE TABLE todo (
 );
 ```
 
-## Flask & etc,... bokeh, pandas, dataframe to html
+## Flask & Bokeh, Pandas, Dataframe to html
 This repo has been updated to work with `Python v3.8` and up.
 
 ## How To Run
