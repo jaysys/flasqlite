@@ -4,16 +4,19 @@
 
 [런타임 데모] https://port-0-flasqlite-1jx7m2gld1u0xx5.gksl2.cloudtype.app/
 
+나는 postgresql에 연결하여 테스트해봤습닏.
+
 postgresql db테이블명 만들때 모두 소문자로 필~
+```
 CREATE TABLE todo (
 	id serial PRIMARY KEY,
 	content VARCHAR (500),
 	completed VARCHAR(50),
 	date_created TIMESTAMP 
 );
+```
 
-
-#FlaskIntroduction
+##FlaskIntroduction
 
 This repo has been updated to work with `Python v3.8` and up.
 
