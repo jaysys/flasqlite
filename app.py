@@ -11,7 +11,7 @@ except:
 
 app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = db_conn 
+app.config['SQLALCHEMY_DATABASE_URI'] = db_conn  #postgresql://id:password@127.0.0.1:port/dbname
 
 with app.app_context():
     db = SQLAlchemy(app)
