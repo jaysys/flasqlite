@@ -4,8 +4,10 @@
 
 런타임 데모: https://port-0-flasqlite-1jx7m2gld1u0xx5.gksl2.cloudtype.app/
 
-나는 postgresql에 연결하여 테스트
+postgresql에 연결하여 테스트
+
 postgresql db테이블명 만들때 모두 소문자로 필~
+
 ```
 CREATE TABLE todo (
 	id serial PRIMARY KEY,
