@@ -1,12 +1,12 @@
 
 <html>
     <head>
-      <title>MetaMask Connection Page</title>
+      <title>MetaMask Connection</title>
   
     </head>
     <body>
       <center>
-      <h1>Connect Your MetaMask Wallet Here!</h1>
+      <h1>Connect MetaMask Wallet</h1>
       <button id='connectWallet' onclick="">Connect Wallet</button>
       <button id='getBalance' onclick="checkBalance()">Get Balance of Wallet</button>
   
@@ -18,8 +18,6 @@
         const connectWallet = document.getElementById('connectWallet')
         const walletAddress = document.getElementById('walletAddress')
         const walletBalance = document.getElementById('walletBalance')
-  
-  
   
         function checkInstalled() {
           if (typeof window.ethereum == 'undefined') {
