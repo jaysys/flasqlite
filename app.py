@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 import pandas as pd
+from sqlalchemy import create_engine
 
 from bokeh.embed import components
 from bokeh.plotting import figure
@@ -111,8 +112,6 @@ def bokeh():
     )
     return (html)
     
-
-
 @app.route('/pandas')
 def pandas():
     #create dataframe
@@ -130,6 +129,22 @@ def pandas():
     text_file.close()
     return render_template('pandas.html')
 
+@app.route('/history')
+def histroy():
+    db = create_engine(db_conn)
+    conn = db.connect()
+    print("[db_connection]",db,conn)
+
+    if True:
+        df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp, div ORDER BY timestamp desc", conn)
+        print(df_div)#.to_markdown(floatfmt=',.2f'))
+    html = df_div.to_html()
+
+    #write html to file
+    text_file = open("templates/history.html", "w")
+    text_file.write(html)
+    text_file.close()
+    return render_template('history.html')
 
 if __name__ == "__main__":
     app.run(debug=True)
