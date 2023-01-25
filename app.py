@@ -11,7 +11,7 @@ except:
 
 app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = db_conn
+app.config['SQLALCHEMY_DATABASE_URI'] = db_conn 
 
 with app.app_context():
     db = SQLAlchemy(app)
@@ -69,6 +69,10 @@ def update(id):
 
     else:
         return render_template('update.html', task=task)
+
+@app.route('/meta')
+def meta():
+    return render_template('meta.html')
 
 
 if __name__ == "__main__":
