@@ -12,3 +12,9 @@ google-auth-httplib2 == 0.1.0
 google-auth-oauthlib == 0.8.0
 psycopg2 == 2.9.5
 bokeh == 3.0.3
+numpy
+python-dateutil
+PyYAML
+requests
+six
+tornad
