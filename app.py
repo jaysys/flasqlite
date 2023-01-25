@@ -122,7 +122,7 @@ def pandas():
         'algebra': [78, 88, 82, 87]})
 
     #render dataframe as html
-    html = df_marks.to_html()
+    html = df_marks.to_html(classes=["table-bordered", "table-striped", "table-hover"])
 
     #write html to file
     text_file = open("templates/pandas.html", "w")
