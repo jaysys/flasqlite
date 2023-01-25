@@ -16,5 +16,5 @@ numpy
 python-dateutil
 PyYAML
 requests
-six
-tornad
+six == 1.16.0
+tornado == 6.2
