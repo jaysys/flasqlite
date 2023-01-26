@@ -138,7 +138,7 @@ def histroy():
     if True:
         #df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp, div ORDER BY timestamp desc", conn)
         df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp ORDER BY timestamp desc", conn)
-        #print(df_div)#.to_markdown(floatfmt=',.2f'))
+        print(df_div)#.to_markdown(floatfmt=',.2f'))
     html = df_div.to_html()
 
     #write html to file
