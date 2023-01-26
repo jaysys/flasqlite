@@ -10,6 +10,7 @@ from bokeh.embed import components
 from bokeh.plotting import figure
 from bokeh.resources import INLINE
 from bokeh.models import DatetimeTickFormatter, NumeralTickFormatter
+from bokeh.models import HoverTool
 
 try:
     db_conn = os.environ.get('DBCONN')
@@ -174,7 +175,7 @@ def dfbokeh():
     print(dates)
     '''
 
-    fig = figure(width=1000, height=600)
+    fig = figure(width=1000, height=600 ) #, tools=[HoverTool()], tooltips="@x == @y",)
 
     # fig.vbar(
     #     x= list(range(rows)),
@@ -187,6 +188,9 @@ def dfbokeh():
     fig.circle(ax, ay , size=1, color="black", alpha=1)#, x_axis_type="datetime")
     fig.yaxis[0].formatter = NumeralTickFormatter(format="0")
     fig.xaxis[0].formatter = DatetimeTickFormatter(months="%b %Y")
+    #fig.xgrid.grid_line_color = "olive"
+    fig.ygrid.band_fill_color = "olive"
+    fig.ygrid.band_fill_alpha = 0.1   
     print(ax)
     # grab the static resources
     js_resources = INLINE.render_js()
