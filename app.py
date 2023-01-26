@@ -172,7 +172,7 @@ def dfbokeh():
     dates = [(datetime.now() + timedelta(day * 7)) for day in range(0, 2)]
     print(dates)
     '''
-    fig = figure(width=1000, height=600 ) #, tools=[HoverTool()], tooltips="@x == @y",)
+    fig = figure(width=1200, height=500 ) #, tools=[HoverTool()], tooltips="@x == @y",)
 
     # fig.vbar(
     #     x= list(range(rows)),
@@ -190,7 +190,7 @@ def dfbokeh():
     #fig.xgrid.grid_line_color = "olive"
     fig.ygrid.band_fill_color = "olive"
     fig.ygrid.band_fill_alpha = 0.1  
-    fig.sizing_mode = 'scale_width'
+    #fig.sizing_mode = 'scale_width'
  
     # grab the static resources
     js_resources = INLINE.render_js()
