@@ -167,14 +167,11 @@ def dfbokeh():
     cols = df_div.shape[1]
     print(rows,cols)
 
-
-
     from datetime import datetime, timedelta
     '''
     dates = [(datetime.now() + timedelta(day * 7)) for day in range(0, 2)]
     print(dates)
     '''
-
     fig = figure(width=1000, height=600 ) #, tools=[HoverTool()], tooltips="@x == @y",)
 
     # fig.vbar(
@@ -186,7 +183,7 @@ def dfbokeh():
     ax = pd.to_datetime(df_div["date"])
     ay = df_div['total'] 
     print(ay)
-    
+
     fig.circle(ax, ay , size=1, color="black", alpha=1)#, x_axis_type="datetime")
     fig.yaxis[0].formatter = NumeralTickFormatter(format="0,0")
     fig.xaxis[0].formatter = DatetimeTickFormatter(months="%F")
