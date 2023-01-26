@@ -88,15 +88,17 @@ def bokeh():
     # init a basic bar chart:
     # http://bokeh.pydata.org/en/latest/docs/user_guide/plotting.html#bars
 
-    fig = figure(width=600, height=600)
-    fig.vbar(
-        x=[1, 2, 3, 4],
-        width=0.5,
-        bottom=0,
-        top=[1.7, 2.2, 4.6, 3.9],
-        color='navy'
-    )
+    fig = figure(width=600, height=400)
 
+    # fig.vbar(
+    #     x=[0,1,2,3,4,5,6],
+    #     top=[11.7, 12.2, 14.6, 13.9,5,16,12] #,width=0.2, bottom=0, color='green'
+    # )
+    
+    ax = [1, 2, 3, 4, 5]
+    ay = [6, 7, 2, 4, 5]
+    fig.circle(ax, ay , size=5, color="red", alpha=0.8)
+    
     # grab the static resources
     js_resources = INLINE.render_js()
     css_resources = INLINE.render_css()
@@ -138,7 +140,7 @@ def histroy():
     if True:
         #df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp, div ORDER BY timestamp desc", conn)
         df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp ORDER BY timestamp desc", conn)
-        #print(df_div)#.to_markdown(floatfmt=',.2f'))
+        print(df_div)#.to_markdown(floatfmt=',.2f'))
     html = df_div.to_html()
 
     #write html to file
@@ -146,6 +148,48 @@ def histroy():
     text_file.write(html)
     text_file.close()
     return render_template('history.html')
+
+@app.route('/dfbokeh')
+def dfbokeh():
+    db = create_engine(db_conn)
+    conn = db.connect()
+    print("[db_connection]",db,conn)
+
+    if True:
+        df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp ORDER BY timestamp desc", conn)
+        print(df_div)#.to_markdown(floatfmt=',.2f'))
+
+    rows = df_div.shape[0]
+    cols = df_div.shape[1]
+    print(rows,cols)
+
+    fig = figure(width=1000, height=600)
+
+    # fig.vbar(
+    #     x= list(range(rows)),
+    #     top= df_div['total'] 
+    # )
+
+    ax = list(range(rows))
+    ay = df_div['total'] 
+    fig.circle(ax, ay , size=2, color="green", alpha=0.5)
+
+    # grab the static resources
+    js_resources = INLINE.render_js()
+    css_resources = INLINE.render_css()
+
+    # render template
+    script, div = components(fig)
+    html = render_template(
+        'dfbokeh.html',
+        plot_script=script,
+        plot_div=div,
+        js_resources=js_resources,
+        css_resources=css_resources,
+    )
+    return (html)
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
