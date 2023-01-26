@@ -189,7 +189,8 @@ def dfbokeh():
     fig.xaxis[0].formatter = DatetimeTickFormatter(months="%F")
     #fig.xgrid.grid_line_color = "olive"
     fig.ygrid.band_fill_color = "olive"
-    fig.ygrid.band_fill_alpha = 0.1   
+    fig.ygrid.band_fill_alpha = 0.1  
+    fig.sizing_mode = 'scale_width'
  
     # grab the static resources
     js_resources = INLINE.render_js()
