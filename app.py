@@ -9,6 +9,7 @@ from sqlalchemy import create_engine
 from bokeh.embed import components
 from bokeh.plotting import figure
 from bokeh.resources import INLINE
+from bokeh.models import DatetimeTickFormatter, NumeralTickFormatter
 
 try:
     db_conn = os.environ.get('DBCONN')
@@ -157,12 +158,21 @@ def dfbokeh():
     print("[db_connection]",db,conn)
 
     if True:
-        df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp ORDER BY timestamp desc", conn)
+        # df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp ORDER BY timestamp desc", conn)
+        df_div = pd.read_sql("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp ORDER BY timestamp desc", conn)
         #print(df_div)#.to_markdown(floatfmt=',.2f'))
 
     rows = df_div.shape[0]
     cols = df_div.shape[1]
     print(rows,cols)
+
+
+
+    from datetime import datetime, timedelta
+    '''
+    dates = [(datetime.now() + timedelta(day * 7)) for day in range(0, 2)]
+    print(dates)
+    '''
 
     fig = figure(width=1000, height=600)
 
@@ -171,10 +181,13 @@ def dfbokeh():
     #     top= df_div['total'] 
     # )
 
-    ax = list(range(rows))
+    #ax = list(range(rows))
+    ax = pd.to_datetime(df_div["date"])
     ay = df_div['total'] 
-    fig.circle(ax, ay , size=2, color="green", alpha=0.5)
-
+    fig.circle(ax, ay , size=1, color="black", alpha=1)#, x_axis_type="datetime")
+    fig.yaxis[0].formatter = NumeralTickFormatter(format="0")
+    fig.xaxis[0].formatter = DatetimeTickFormatter(months="%b %Y")
+    print(ax)
     # grab the static resources
     js_resources = INLINE.render_js()
     css_resources = INLINE.render_css()
