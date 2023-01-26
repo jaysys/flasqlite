@@ -187,7 +187,7 @@ def dfbokeh():
     ay = df_div['total'] 
     fig.circle(ax, ay , size=1, color="black", alpha=1)#, x_axis_type="datetime")
     fig.yaxis[0].formatter = NumeralTickFormatter(format="0")
-    fig.xaxis[0].formatter = DatetimeTickFormatter(months="%b %Y")
+    fig.xaxis[0].formatter = DatetimeTickFormatter(months="%F")
     #fig.xgrid.grid_line_color = "olive"
     fig.ygrid.band_fill_color = "olive"
     fig.ygrid.band_fill_alpha = 0.1   
