@@ -185,13 +185,15 @@ def dfbokeh():
     #ax = list(range(rows))
     ax = pd.to_datetime(df_div["date"])
     ay = df_div['total'] 
+    print(ay)
+    
     fig.circle(ax, ay , size=1, color="black", alpha=1)#, x_axis_type="datetime")
     fig.yaxis[0].formatter = NumeralTickFormatter(format="0,0")
     fig.xaxis[0].formatter = DatetimeTickFormatter(months="%F")
     #fig.xgrid.grid_line_color = "olive"
     fig.ygrid.band_fill_color = "olive"
     fig.ygrid.band_fill_alpha = 0.1   
-    #print(ax)
+ 
     # grab the static resources
     js_resources = INLINE.render_js()
     css_resources = INLINE.render_css()
