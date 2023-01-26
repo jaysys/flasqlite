@@ -94,7 +94,7 @@ def bokeh():
     #     x=[0,1,2,3,4,5,6],
     #     top=[11.7, 12.2, 14.6, 13.9,5,16,12] #,width=0.2, bottom=0, color='green'
     # )
-    
+
     ax = [1, 2, 3, 4, 5]
     ay = [6, 7, 2, 4, 5]
     fig.circle(ax, ay , size=5, color="red", alpha=0.8)
@@ -141,6 +141,7 @@ def histroy():
         #df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp, div ORDER BY timestamp desc", conn)
         df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp ORDER BY timestamp desc", conn)
         print(df_div)#.to_markdown(floatfmt=',.2f'))
+    
     html = df_div.to_html()
 
     #write html to file
@@ -157,7 +158,7 @@ def dfbokeh():
 
     if True:
         df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp ORDER BY timestamp desc", conn)
-        print(df_div)#.to_markdown(floatfmt=',.2f'))
+        #print(df_div)#.to_markdown(floatfmt=',.2f'))
 
     rows = df_div.shape[0]
     cols = df_div.shape[1]
