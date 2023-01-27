@@ -209,5 +209,20 @@ def dfbokeh():
 
 
 
+
+@app.route('/tyscript', methods=["GET"])
+def tyscript():
+    # Create or load a dataframe
+    df = pd.DataFrame()
+    df['col1'] = list(range(5))
+    df['col2'] = list(range(2,7))
+    df['col3'] = ['v1', 'v2', 'v3', 'v4', 'v5']
+    
+    # Send values as list of lists
+    data = df.values.tolist()
+    print("===>>",data) 
+    return render_template('tyscript.html', data=data)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
