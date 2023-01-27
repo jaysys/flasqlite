@@ -16,7 +16,7 @@
 
 <body>
     <br>
-    <p>**POC on using Flask with PyScript along with Numpy, Pandas and Matplotlib</p>
+    <p>** Numpy, Pandas and Matplotlib on pyscript & flask</p>
     <div class="grid-container">
         <div id="plot1" class="grid-child">
             <div class="snippet" data-title=".dot-typing">
@@ -46,8 +46,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-np.random.seed(42)
-
 # Plot 1
 rv = np.random.standard_normal(1000)
 f1 = plt.figure(1)
@@ -71,7 +69,7 @@ y = np.random.randn(1000)
 f3 = plt.figure(3)
 plt.scatter(x, y)
 plt.title("Scatter plot of random values")
-pyscript.write('plot3', f3)
+pyscript.write('plot3', f3) 
     </py-script>
 
     <div>
@@ -93,7 +91,7 @@ pyscript.write('plot3', f3)
                 {% endfor %}
             </tbody>
         </table>
-    </div>
+    </div> 
 
 </body>
 
