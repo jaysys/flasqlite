@@ -22,8 +22,7 @@ qry_all="select * from my_asset"
 
 qr_each_div_sum = "select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, round(sum(total_krw)) as total_krw from my_asset group by div, timestamp order by timestamp desc"
 df = pd.read_sql(qr_each_div_sum, conn)
-print(df)#.to_markdown(floatfmt=',.2f'))
-print(df.head(5))
+print(df)
 
 # qr_crypto = "select div, to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, round(sum(total_krw)) as total_krw from my_asset where div = 'CRYPTO' group by div, timestamp order by timestamp desc"
 # df_crypto = pd.read_sql(qr_crypto, conn, index_col=None)
@@ -35,8 +34,6 @@ print(df.head(5))
 # qr_cash = "select div, to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, round(sum(total_krw)) as total_krw from my_asset where div = 'CASH' group by div, timestamp order by timestamp desc"
 # df_cash = pd.read_sql(qr_cash, conn, index_col=None)
 # print(df_each_div_sum)#.to_markdown(floatfmt=',.2f'))
-
-
 
 '''
 import matplotlib.pyplot as plt
