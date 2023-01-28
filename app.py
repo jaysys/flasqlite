@@ -21,7 +21,6 @@ except:
 app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SQLALCHEMY_DATABASE_URI'] = db_conn  # 'postgresql://id:password@127.0.0.1:port/dbname'
-
 with app.app_context():
     db = SQLAlchemy(app)
 
@@ -34,8 +33,13 @@ class Todo(db.Model):
         return '<Task %r>' % self.id
 
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route("/")
 def index():
+    return render_template('./index.html')
+
+
+@app.route('/task', methods=['POST', 'GET'])
+def task():
     if request.method == 'POST':
         task_content = request.form['content']
         new_task = Todo(content=task_content)
@@ -43,13 +47,12 @@ def index():
         try:
             db.session.add(new_task)
             db.session.commit()
-            return redirect('/')
+            return redirect('/task')
         except:
             return 'There was an issue adding your task'
-
     else:
         tasks = Todo.query.order_by(Todo.date_created).all()
-        return render_template('index.html', tasks=tasks)
+        return render_template('task.html', tasks=tasks)
 
 
 @app.route('/delete/<int:id>')
@@ -59,7 +62,7 @@ def delete(id):
     try:
         db.session.delete(task_to_delete)
         db.session.commit()
-        return redirect('/')
+        return redirect('/task')
     except:
         return 'There was a problem deleting that task'
 
@@ -72,7 +75,7 @@ def update(id):
 
         try:
             db.session.commit()
-            return redirect('/')
+            return redirect('/task')
         except:
             return 'There was an issue updating your task'
 
@@ -206,8 +209,6 @@ def dfbokeh():
         css_resources=css_resources,
     )
     return (html)
-
-
 
 
 @app.route('/tyscript', methods=["GET"]) #
