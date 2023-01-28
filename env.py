@@ -20,7 +20,7 @@ print("connected:",db,conn)
 
 qry_all="select * from my_asset"
 
-qr_each_div_sum = "select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, round(sum(total_krw)) as total_krw from my_asset group by div, timestamp order by timestamp desc"
+qr_each_div_sum = "select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, round(sum(total_krw)) as total_krw from my_asset group by div, timestamp order by timestamp asc"
 
 '''
 pandas query
@@ -31,13 +31,34 @@ pandas query
 '''
 raw sql query
 '''
-data = []
+from pprint import pprint
+crypto = []
+stock = []
+cash = []
+date = []
 with db.connect() as con:
     rs = con.execute(qr_each_div_sum)
     for row in rs:
-        data.append(row)
-        #print (row)
-    print(data[0][0])
+        if row[1] == 'CRYPTO':
+            date.append(row[0])
+            crypto.append(row[2])
+        elif row[1] == 'STOCK':
+            stock.append(row[2])
+        elif row[1] == 'CASH':
+            cash.append(row[2])
+        else:
+            pass
+    
+
+import matplotlib.pyplot as plt
+dframe = pd.DataFrame({
+    'crypto': crypto,
+    'stock': stock,
+    'cash': cash,}, 
+    index=date)
+dframe.plot.area(stacked=True) #stacked=False
+plt.show()
+
 
 # qr_crypto = "select div, to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, round(sum(total_krw)) as total_krw from my_asset where div = 'CRYPTO' group by div, timestamp order by timestamp desc"
 # df_crypto = pd.read_sql(qr_crypto, conn, index_col=None)
