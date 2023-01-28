@@ -1,20 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flask</title>
-</head>
-<body>
-    <br>
-    <h1>:)</h1>
-    <p>flask playgroud on cloudtype.io</p>
-    <p>----------</p>
-    <p>/meta, metamask wallet connect</p>
-    <p>/dfbokeh, bokeh with pandas, postgresql</p>
-    <p>/history, python pandas</p>
-    <p>/tyscript, tyscript</p>
-    <p>/task, postgresql</p>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block head %}
+<title>flask playground</title>
+{% endblock %}
+
+{% block body %}
+<br>
+<h1>:)</h1>
+<p>flask playgroud on cloudtype.io</p>
+<p>----------</p>
+<p>/meta, metamask wallet connect</p>
+<p>/dfbokeh, bokeh with pandas, postgresql</p>
+<p>/history, python pandas</p>
+<p>/tyscript, tyscript</p>
+<p>/task, postgresql</p>
+{% endblock %}
