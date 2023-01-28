@@ -207,6 +207,7 @@ def dfbokeh():
         plot_div=div,
         js_resources=js_resources,
         css_resources=css_resources,
+        rows = rows
     )
     return (html)
 
