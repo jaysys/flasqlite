@@ -119,8 +119,8 @@ def bokeh():
     )
     return (html)
     
-@app.route('/pandas')
-def pandas():
+@app.route('/tailcss')
+def tailcss():
     #create dataframe
     # df_marks = pd.DataFrame({'name': ['Somu', 'Kiku', 'Amol', 'Lini'],
     #     'physics': [68, 74, 77, 78],
@@ -146,7 +146,7 @@ def pandas():
     # render template
     script, div = components(fig)
     html = render_template(
-        'pandas.html',
+        'tailcss.html',
         plot_script=script,
         plot_div=div,
         js_resources=js_resources,
@@ -154,10 +154,6 @@ def pandas():
     )
     return (html)
 
-
-
-
-  
 
 
 
