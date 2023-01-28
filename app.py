@@ -137,7 +137,7 @@ def pandas():
     return render_template('pandas.html')
 
 @app.route('/history')
-def histroy():
+def history():
     db = create_engine(db_conn)
     conn = db.connect()
     print("[db_connection]",db,conn)
@@ -225,6 +225,15 @@ def tyscript():
     print(data)
 
     return render_template('tyscript.html', data=data)
+
+
+with app.test_request_context():
+    print (url_for('meta'))  
+    print (url_for('dfbokeh'))  
+    print (url_for('history'))  
+    print (url_for('tyscript'))  
+    print (url_for('task'))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
