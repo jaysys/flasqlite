@@ -122,18 +122,46 @@ def bokeh():
 @app.route('/pandas')
 def pandas():
     #create dataframe
-    df_marks = pd.DataFrame({'name': ['Somu', 'Kiku', 'Amol', 'Lini'],
-        'physics': [68, 74, 77, 78],
-        'chemistry': [84, 56, 73, 69],
-        'algebra': [78, 88, 82, 87]})
+    # df_marks = pd.DataFrame({'name': ['Somu', 'Kiku', 'Amol', 'Lini'],
+    #     'physics': [68, 74, 77, 78],
+    #     'chemistry': [84, 56, 73, 69],
+    #     'algebra': [78, 88, 82, 87]})
 
-    #render dataframe as html
-    table_html = df_marks.to_html()
-    print(table_html)
+    # #render dataframe as html
+    # table_html = df_marks.to_html()
+    # print(table_html)
 
-    #return render_template(html) #'pandas.html')
-    return render_template('pandas.html', table_data = table_html)
+    # #return render_template(html) #'pandas.html')
+    # return render_template('pandas.html', table_data = table_html)
+
+    fig = figure(width=600, height=400)
+    ax = [1, 2, 3, 4, 5]
+    ay = [6, 7, 2, 4, 5]
+    fig.circle(ax, ay , size=5, color="red", alpha=0.8)
+    
+    # grab the static resources
+    js_resources = INLINE.render_js()
+    css_resources = INLINE.render_css()
+
+    # render template
+    script, div = components(fig)
+    html = render_template(
+        'pandas.html',
+        plot_script=script,
+        plot_div=div,
+        js_resources=js_resources,
+        css_resources=css_resources,
+    )
+    return (html)
+
+
+
+
   
+
+
+
+
 @app.route('/history')
 def history():
     db = create_engine(db_conn)

@@ -3,4 +3,4 @@ env/
 test.db
 .github/
 templates/history.html
-templates/pandas.html
+
