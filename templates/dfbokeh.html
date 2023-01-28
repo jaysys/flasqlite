@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block head %}
-<title>Bokeh & pandas playground</title>
+<title>bokeh & pandas playground</title>
 <meta http-equiv="refresh" content="300">
 {{ js_resources|indent(4)|safe }}
 {{ css_resources|indent(4)|safe }}
@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block body %}
-<p>*:) Bokeh with Pandas dataframe from Postgresql</p>
-<p>total:{{rows}}</p>
+<h1>:)</h1>
+<p>Total: {{total}}, Date updated: {{date}}</p>
 {{ plot_div|indent(4)|safe }}
 {% endblock %}

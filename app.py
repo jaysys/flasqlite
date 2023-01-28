@@ -128,14 +128,12 @@ def pandas():
         'algebra': [78, 88, 82, 87]})
 
     #render dataframe as html
-    html = df_marks.to_html(classes=["table-bordered", "table-striped", "table-hover"])
+    table_html = df_marks.to_html()
+    print(table_html)
 
-    #write html to file
-    text_file = open("templates/pandas.html", "w")
-    text_file.write(html)
-    text_file.close()
-    return render_template('pandas.html')
-
+    #return render_template(html) #'pandas.html')
+    return render_template('pandas.html', table_data = table_html)
+  
 @app.route('/history')
 def history():
     db = create_engine(db_conn)
@@ -168,14 +166,16 @@ def dfbokeh():
 
     rows = df_div.shape[0]
     cols = df_div.shape[1]
-    print(">>>",rows,cols,df_div['total'][rows-1], "<<<")
+    total = '{:,}'.format(df_div['total'][0])   #'{:,}'.format(value)
+    date = (df_div['date'][0])
+    print(">>>",rows,cols,date,total, "<<<")
 
     from datetime import datetime, timedelta
     '''
     dates = [(datetime.now() + timedelta(day * 7)) for day in range(0, 2)]
     print(dates)
     '''
-    fig = figure(width=800, height=500 ) #, tools=[HoverTool()], tooltips="@x == @y",)
+    fig = figure(width=1000, height=500 ) #, tools=[HoverTool()], tooltips="@x == @y",)
 
     # fig.vbar(
     #     x= list(range(rows)),
@@ -207,7 +207,8 @@ def dfbokeh():
         plot_div=div,
         js_resources=js_resources,
         css_resources=css_resources,
-        rows = rows
+        total = total,
+        date = date
     )
     return (html)
 
