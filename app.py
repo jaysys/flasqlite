@@ -2,10 +2,8 @@ import os
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-
 import pandas as pd
 from sqlalchemy import create_engine
-
 from bokeh.embed import components
 from bokeh.plotting import figure, show
 from bokeh.resources import INLINE
@@ -121,19 +119,6 @@ def bokeh():
     
 @app.route('/tailcss')
 def tailcss():
-    #create dataframe
-    # df_marks = pd.DataFrame({'name': ['Somu', 'Kiku', 'Amol', 'Lini'],
-    #     'physics': [68, 74, 77, 78],
-    #     'chemistry': [84, 56, 73, 69],
-    #     'algebra': [78, 88, 82, 87]})
-
-    # #render dataframe as html
-    # table_html = df_marks.to_html()
-    # print(table_html)
-
-    # #return render_template(html) #'pandas.html')
-    # return render_template('pandas.html', table_data = table_html)
-
     fig = figure(width=600, height=400)
     ax = [1, 2, 3, 4, 5]
     ay = [6, 7, 2, 4, 5]
@@ -191,19 +176,7 @@ def dfbokeh():
     date = (df_div['date'][0])
     print(">>>",rows,cols,date,total, "<<<")
 
-    from datetime import datetime, timedelta
-    '''
-    dates = [(datetime.now() + timedelta(day * 7)) for day in range(0, 2)]
-    print(dates)
-    '''
     fig = figure(width=1000, height=500 ) #, tools=[HoverTool()], tooltips="@x == @y",)
-
-    # fig.vbar(
-    #     x= list(range(rows)),
-    #     top= df_div['total'] 
-    # )
-
-    #ax = list(range(rows))
     ax = pd.to_datetime(df_div["date"])
     ay = df_div['total'] 
 
@@ -213,7 +186,7 @@ def dfbokeh():
     fig.xaxis[0].formatter = DatetimeTickFormatter(months="%F")
     #fig.xgrid.grid_line_color = "olive"
     fig.ygrid.band_fill_color = "olive"
-    fig.ygrid.band_fill_alpha = 0.1  
+    fig.ygrid.band_fill_alpha = 0.1
     #fig.sizing_mode = 'scale_width'
  
     # grab the static resources
@@ -238,7 +211,6 @@ def dfbokeh():
 def tyscript():
     # Create or load a dataframe
     df = pd.DataFrame()
-
     df['name'] = ['Celo', 'Jake', 'Eth', 'Glyp', 'Ada']
     df['num'] = list(range(5))
     df['score'] = list(range(12,17))
@@ -253,9 +225,7 @@ def tyscript():
 with app.test_request_context():
     print (url_for('meta'))  
     print (url_for('dfbokeh'))  
-    print (url_for('history'))  
-    print (url_for('tyscript'))  
-    print (url_for('task'))
+
 
 
 if __name__ == "__main__":
