@@ -172,7 +172,7 @@ def dfbokeh():
     dates = [(datetime.now() + timedelta(day * 7)) for day in range(0, 2)]
     print(dates)
     '''
-    fig = figure(width=1200, height=700 ) #, tools=[HoverTool()], tooltips="@x == @y",)
+    fig = figure(width=800, height=500 ) #, tools=[HoverTool()], tooltips="@x == @y",)
 
     # fig.vbar(
     #     x= list(range(rows)),
