@@ -22,6 +22,8 @@ qry_all="select * from my_asset"
 
 qr_each_div_sum = "select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, round(sum(total_krw)) as total_krw from my_asset group by div, timestamp order by timestamp asc"
 
+qr_each_div_sum2 = "select timestamp::timestamp as date, div, round(sum(total_krw)) as total_krw from my_asset group by div, timestamp order by timestamp asc"
+
 '''
 pandas query
 '''
@@ -37,7 +39,7 @@ stock = []
 cash = []
 date = []
 with db.connect() as con:
-    rs = con.execute(qr_each_div_sum)
+    rs = con.execute(qr_each_div_sum2)
     for row in rs:
         if row[1] == 'CRYPTO':
             date.append(row[0])
@@ -50,15 +52,24 @@ with db.connect() as con:
             pass
     
 
+
 import matplotlib.pyplot as plt
 dframe = pd.DataFrame({
     'crypto': crypto,
     'stock': stock,
     'cash': cash,}, 
     index=date)
-dframe.plot.area(stacked=True) #stacked=False
-plt.show()
+print(dframe)
+# dframe.plot.area(stacked=True) #stacked=False
+# plt.show()
 
+from bokeh.palettes import brewer
+from bokeh.plotting import figure, show, output_notebook
+
+n = dframe.shape[1]
+p = figure(x_axis_type='datetime')
+p.varea_stack(stackers=dframe.columns, x='index', source=dframe, color=brewer['Spectral'][n],)
+show(p)
 
 # qr_crypto = "select div, to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, round(sum(total_krw)) as total_krw from my_asset where div = 'CRYPTO' group by div, timestamp order by timestamp desc"
 # df_crypto = pd.read_sql(qr_crypto, conn, index_col=None)
