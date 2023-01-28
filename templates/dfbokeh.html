@@ -1,17 +1,20 @@
 {% extends 'base.html' %}
 
 {% block head %}
-    <title>bokeh & pandas playground</title>
-    <meta http-equiv="refresh" content="300">
-    {{ js_resources|indent(4)|safe }}
-    {{ css_resources|indent(4)|safe }}
-    {{ plot_script|indent(4)|safe }}
+<style>
+    body, html {background-color: white;}
+</style>
+<title>bokeh & pandas playground</title>
+<meta http-equiv="refresh" content="300">
+{{ js_resources|indent(4)|safe }}
+{{ css_resources|indent(4)|safe }}
+{{ plot_script|indent(4)|safe }}
 {% endblock %}
 
 {% block body %}
-    <center>
-        <h1>:)</h1>
-        <p>Total: {{total}}, last updated: {{date}}</p>
-        {{ plot_div|indent(4)|safe }}
-    </center>
+<center>
+    <h1>:)</h1>
+    <p>Total: {{total}}, last updated: {{date}}</p>
+    {{ plot_div|indent(4)|safe }}
+</center>
 {% endblock %}
