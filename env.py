@@ -21,8 +21,23 @@ print("connected:",db,conn)
 qry_all="select * from my_asset"
 
 qr_each_div_sum = "select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, round(sum(total_krw)) as total_krw from my_asset group by div, timestamp order by timestamp desc"
-df = pd.read_sql(qr_each_div_sum, conn)
-print(df)
+
+'''
+pandas query
+'''
+# df = pd.read_sql(qr_each_div_sum, conn)
+# print(df)
+
+'''
+raw sql query
+'''
+data = []
+with db.connect() as con:
+    rs = con.execute(qr_each_div_sum)
+    for row in rs:
+        data.append(row)
+        #print (row)
+    print(data[0][0])
 
 # qr_crypto = "select div, to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, round(sum(total_krw)) as total_krw from my_asset where div = 'CRYPTO' group by div, timestamp order by timestamp desc"
 # df_crypto = pd.read_sql(qr_crypto, conn, index_col=None)
@@ -47,4 +62,26 @@ plt.show()
 '''
 
 
+
+'''
+raw sql query
+'''
+# st_quiry = "select * from todo order by date_created desc"
+# with db.connect() as con:
+#     rs = con.execute(st_quiry)
+#     for row in rs:
+#         print (row)
+
+'''
+insert data
+'''
+# from sqlalchemy.sql import text
+# from datetime import datetime
+# with db.connect() as con:
+#     data = ( { "id": 101, "content": "The Hobbit", "date_created": datetime.now() },
+#              { "id": 102, "content": "The Silmarillion", "date_created": datetime.now() },
+#     )
+#     statement = text("""INSERT INTO todo(id, content, date_created) VALUES(:id, :content, :date_created)""")
+#     for line in data:
+#         con.execute(statement, **line)
 

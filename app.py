@@ -8,7 +8,6 @@ from bokeh.embed import components
 from bokeh.plotting import figure, show
 from bokeh.resources import INLINE
 from bokeh.models import DatetimeTickFormatter, NumeralTickFormatter
-from bokeh.models import HoverTool
 
 try:
     db_conn = os.environ.get('DBCONN')
@@ -23,8 +22,12 @@ with app.app_context():
     db = SQLAlchemy(app)
 
 class Todo(db.Model):
+    '''
+    DB table
+    '''
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(200), nullable=False)
+    completed = db.Column(db.String(100), nullable=True)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
@@ -40,7 +43,8 @@ def index():
 def task():
     if request.method == 'POST':
         task_content = request.form['content']
-        new_task = Todo(content=task_content)
+        task_completed = request.form['completed']
+        new_task = Todo(content=task_content, completed=task_completed)
 
         try:
             db.session.add(new_task)
@@ -70,6 +74,7 @@ def update(id):
 
     if request.method == 'POST':
         task.content = request.form['content']
+        task.completed = request.form['completed']
 
         try:
             db.session.commit()

@@ -14,12 +14,14 @@
         <tr>
             <th>Task</th>
             <th>Added</th>
-            <th>Actions</th>
+            <th>Complted</th>
+            <th>Actions</th>         
         </tr>
         {% for task in tasks %}
             <tr>
                 <td>{{ task.content }}</td>
                 <td>{{ task.date_created.date() }}</td>
+                <td>{{ task.completed }}</td>
                 <td>
                     <a href="/delete/{{task.id}}">Delete</a>
                     <br>
@@ -33,6 +35,7 @@
     <div class="form">
         <form action="/task" method="POST">
             <input type="text" name="content" id="content">
+            <input type="text" name="completed" id="completed">
             <input type="submit" value="Add Task">
         </form>
     </div>
