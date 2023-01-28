@@ -155,9 +155,6 @@ def tailcss():
     return (html)
 
 
-
-
-
 @app.route('/history')
 def history():
     db = create_engine(db_conn)
