@@ -25,7 +25,7 @@ qr_each_div_sum = "select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as
 qr_each_div_sum2 = "select timestamp::timestamp as date, div, round(sum(total_krw)) as total_krw from my_asset group by div, timestamp order by timestamp asc"
 
 '''
-pandas query
+pandas 이용한 query
 '''
 # df = pd.read_sql(qr_each_div_sum, conn)
 # print(df)
@@ -52,7 +52,6 @@ with db.connect() as con:
             pass
     
 
-
 import matplotlib.pyplot as plt
 dframe = pd.DataFrame({
     'crypto': crypto,
@@ -60,16 +59,41 @@ dframe = pd.DataFrame({
     'cash': cash,}, 
     index=date)
 print(dframe)
+
+'''
+1.판다스&맷플랏 이용한 데이터프레임 누적영역라인 출력
+'''
 # dframe.plot.area(stacked=True) #stacked=False
 # plt.show()
 
-from bokeh.palettes import brewer
-from bokeh.plotting import figure, show, output_notebook
 
+'''
+2.보케 누적영역라인
+'''
+from bokeh.palettes import brewer
+from bokeh.palettes import Spectral11
+from bokeh.plotting import figure, show, output_notebook
 n = dframe.shape[1]
-p = figure(x_axis_type='datetime')
-p.varea_stack(stackers=dframe.columns, x='index', source=dframe, color=brewer['Spectral'][n],)
+p = figure(width=900, height=600, x_axis_type='datetime')
+p.varea_stack(stackers=dframe.columns, 
+            x='index', 
+            source=dframe, 
+            color=brewer['Spectral'][n])
 show(p)
+
+
+'''
+3.보케 멀티싱글라인
+'''
+numlines = len(dframe.columns)
+mypalette = Spectral11[0:numlines]
+p = figure(width=900, height=600, x_axis_type="datetime") 
+p.multi_line(xs = [dframe.index.values]*numlines,
+            ys = [dframe[name].values for name in dframe],
+            line_color = mypalette,
+            line_width = 1.5)
+show(p)
+
 
 # qr_crypto = "select div, to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, round(sum(total_krw)) as total_krw from my_asset where div = 'CRYPTO' group by div, timestamp order by timestamp desc"
 # df_crypto = pd.read_sql(qr_crypto, conn, index_col=None)
@@ -81,18 +105,6 @@ show(p)
 # qr_cash = "select div, to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, round(sum(total_krw)) as total_krw from my_asset where div = 'CASH' group by div, timestamp order by timestamp desc"
 # df_cash = pd.read_sql(qr_cash, conn, index_col=None)
 # print(df_each_div_sum)#.to_markdown(floatfmt=',.2f'))
-
-'''
-import matplotlib.pyplot as plt
-dframe = pd.DataFrame({
-    'sales': [10, 2, 3, 9, 10, 6],
-    'signups': [10, 5, 6, 12, 14, 13],
-    'visits': [20, 42, 28, 62, 81, 50],}, 
-    index=pd.date_range(start='2018/01/01', end='2018/07/01',freq='M'))
-dframe.plot.area(stacked=True) #stacked=False
-plt.show()
-'''
-
 
 
 '''
