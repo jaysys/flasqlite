@@ -60,6 +60,7 @@ dframe = pd.DataFrame({
     index=date)
 print(dframe)
 
+
 '''
 1.판다스&맷플랏 이용한 데이터프레임 누적영역라인 출력
 '''
@@ -115,6 +116,7 @@ raw sql query
 #     rs = con.execute(st_quiry)
 #     for row in rs:
 #         print (row)
+
 
 '''
 insert data
