@@ -155,14 +155,14 @@ def history():
     if True:
         #df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp, div ORDER BY timestamp desc", conn)
         df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, round(sum(total_krw)) as total FROM my_asset WHERE div != 'CASH' GROUP BY timestamp, div ORDER BY timestamp, div desc", conn)
-        print(df_div)#.to_markdown(floatfmt=',.2f'))
     
     html = df_div.to_html()
 
     #write html to file
-    text_file = open("templates/history.html", "w")
-    text_file.write(html)
-    text_file.close()
+    with open("templates/history.html", "w") as text_file:
+        text_file.write(html)
+
+    print(df_div)#.to_markdown(floatfmt=',.2f'))
     return render_template('history.html')
 
 @app.route('/dfbokeh')
