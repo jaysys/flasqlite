@@ -75,7 +75,7 @@ from bokeh.palettes import brewer
 from bokeh.palettes import Spectral11
 from bokeh.plotting import figure, show, output_notebook
 n = dframe.shape[1]
-p = figure(width=900, height=600, x_axis_type='datetime')
+p = figure(width=1000, height=600, x_axis_type='datetime')
 p.varea_stack(stackers=dframe.columns, 
             x='index', 
             source=dframe, 
@@ -88,7 +88,7 @@ show(p)
 '''
 numlines = len(dframe.columns)
 mypalette = Spectral11[0:numlines]
-p = figure(width=900, height=600, x_axis_type="datetime") 
+p = figure(width=1000, height=600, x_axis_type="datetime") 
 p.multi_line(xs = [dframe.index.values]*numlines,
             ys = [dframe[name].values for name in dframe],
             line_color = mypalette,
