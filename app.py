@@ -174,18 +174,21 @@ def dfbokeh():
     if True:
         # df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp ORDER BY timestamp desc", conn)
         df_div = pd.read_sql("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp ORDER BY timestamp desc", conn, index_col=None)
+        df_div_stock = pd.read_sql("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset WHERE div = 'STOCK' GROUP BY timestamp, div ORDER BY timestamp desc", conn, index_col=None)
+        df_div_crypto = pd.read_sql("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset WHERE div = 'CRYPTO' GROUP BY timestamp, div ORDER BY timestamp desc", conn, index_col=None)        
         #print(df_div)#.to_markdown(floatfmt=',.2f'))
 
+
+    '''
+    '''
     rows = df_div.shape[0]
     cols = df_div.shape[1]
     total = '{:,}'.format(df_div['total'][0])   #'{:,}'.format(value)
     date = (df_div['date'][0])
-    print(">>>",rows,cols,date,total, "<<<")
-
+    print(">>total>>",rows,cols,date,total, "<<<")
     fig = figure(width=1000, height=500 ) #, tools=[HoverTool()], tooltips="@x == @y",)
     ax = pd.to_datetime(df_div["date"])
     ay = df_div['total'] 
-
     #fig.circle(ax, ay , size=1, color="black", alpha=1)#, x_axis_type="datetime")
     fig.line(ax, ay, color="green", alpha=1)#, x_axis_type="datetime")
     fig.yaxis[0].formatter = NumeralTickFormatter(format="0,0")
@@ -195,20 +198,75 @@ def dfbokeh():
     fig.ygrid.band_fill_alpha = 0.1
     #fig.sizing_mode = 'scale_width'
  
+
+    '''
+    '''
+    rows = df_div_stock.shape[0]
+    cols = df_div_stock.shape[1]
+    total_stock = '{:,}'.format(df_div_stock['total'][0])   #'{:,}'.format(value)
+    date2 = (df_div_stock['date'][0])
+    print(">>stock_total>>",rows,cols,date,total_stock, "<<<")
+    fig2 = figure(width=1000, height=500 ) #, tools=[HoverTool()], tooltips="@x == @y",)
+    ax2 = pd.to_datetime(df_div_stock["date"])
+    ay2 = df_div_stock['total'] 
+    #fig2.circle(ax, ay , size=1, color="black", alpha=1)#, x_axis_type="datetime")
+    fig2.line(ax2, ay2, color="green", alpha=1)#, x_axis_type="datetime")
+    fig2.yaxis[0].formatter = NumeralTickFormatter(format="0,0")
+    fig2.xaxis[0].formatter = DatetimeTickFormatter(months="%F")
+    #fig2.xgrid.grid_line_color = "olive"
+    fig2.ygrid.band_fill_color = "olive"
+    fig2.ygrid.band_fill_alpha = 0.1
+    #fig2.sizing_mode = 'scale_width'
+
+
+
+    '''
+    '''
+    rows = df_div_crypto.shape[0]
+    cols = df_div_crypto.shape[1]
+    total_crypto = '{:,}'.format(df_div_crypto['total'][0])   #'{:,}'.format(value)
+    date3 = (df_div_crypto['date'][0])
+    print(">>stock_crypto>>",rows,cols,date3,total_crypto, "<<<")
+    fig3 = figure(width=1000, height=500 ) #, tools=[HoverTool()], tooltips="@x == @y",)
+    ax3 = pd.to_datetime(df_div_crypto["date"])
+    ay3 = df_div_crypto['total'] 
+    #fig2.circle(ax3, ay3 , size=1, color="black", alpha=1)#, x_axis_type="datetime")
+    fig3.line(ax3, ay3, color="green", alpha=1)#, x_axis_type="datetime")
+    fig3.yaxis[0].formatter = NumeralTickFormatter(format="0,0")
+    fig3.xaxis[0].formatter = DatetimeTickFormatter(months="%F")
+    #fig3.xgrid.grid_line_color = "olive"
+    fig3.ygrid.band_fill_color = "olive"
+    fig3.ygrid.band_fill_alpha = 0.1
+    #fig3.sizing_mode = 'scale_width'
+
+
+
+
+
     # grab the static resources
     js_resources = INLINE.render_js()
     css_resources = INLINE.render_css()
 
     # render template
     script, div = components(fig)
+    script2, div2 = components(fig2)
+    script3, div3 = components(fig3)
     html = render_template(
         'dfbokeh.html',
         plot_script=script,
+        plot_script_stock=script2,
+        plot_script_crypto=script3,
         plot_div=div,
+        plot_div_stock = div2,
+        plot_div_crypto = div3,
         js_resources=js_resources,
         css_resources=css_resources,
         total = total,
-        date = date
+        date = date,
+        total_stock = total_stock,
+        date2 = date2,
+        total_crypto = total_crypto,
+        date3 = date3
     )
     return (html)
 
