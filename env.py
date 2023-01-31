@@ -13,6 +13,12 @@ try:
 except:
     pass
 
+'''
+how-to set environ on Win(PS) & Mac
+>> $env:DBCONN="postgresql://~~~~ @~:~/mydb"
+>> export = ""
+'''
+
 from sqlalchemy import create_engine
 db = create_engine(db_conn)
 conn = db.connect()
