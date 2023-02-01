@@ -35,6 +35,7 @@ df_rs = pd.read_sql("SELECT * FROM pandas_data", conn)
 print(df_rs) 
 conn.close()
 
+
 '''
 Read by Rraw_sql_query with psycopg2
 '''
@@ -83,14 +84,15 @@ conn2.close()
 
 
 
-
-
 '''
-====================================
+=====================
 pd.read_sql
 '''
 db = create_engine(conn_string)
 conn = db.connect()
-df_rs = pd.read_sql("SELECT * FROM pandas_data", conn)
+# df_div = pd.read_sql("SELECT timestamp, div, round(sum(total_krw)) as total FROM my_asset GROUP BY div, timestamp ORDER BY timestamp DESC LIMIT 20 ;", conn)
+df_stock = pd.read_sql("SELECT timestamp, div, round(sum(total_krw)) as total FROM my_asset WHERE div = 'STOCK' GROUP BY div, timestamp ORDER BY timestamp DESC LIMIT 20 ;", conn)
+# df_total = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp ,'YY/MM/DD HH24:MI') as date_time, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp ORDER BY timestamp DESC LIMIT 20 ;", conn)
 conn.close()
-print(df_rs) 
+print(df_stock) 
+
