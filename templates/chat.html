@@ -9,19 +9,8 @@
 <br>
 <br>
 
-<p>
-    completions = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=1024,
-        n=1,
-        stop=None,
-        temperature=0.5,
-    )    
-</p>
 <center>
-
-<h1>talking with AI</h1>
+<h1>talking with AI, GPT3</h1>
 <form action="/chat" method="post">
     <input type="text" name="prompt" maxlength="3000" size="60">
     <input type="submit" value="Submit">
@@ -44,5 +33,6 @@
     xhr.send(`prompt=${encodeURIComponent(prompt)}`);
     });
 </script>
+</center>
 
 {% endblock %}
