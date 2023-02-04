@@ -8,7 +8,7 @@ def run(k, q):
     openai.api_key = k
 
     # Generate text using the GPT-3 model
-    model_engine = "text-davinci-002"
+    model_engine = "text-davinci-003"
     question = q
 
     completions = openai.Completion.create(

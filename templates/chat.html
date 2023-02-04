@@ -8,6 +8,17 @@
 {% block body %}
 <br>
 <br>
+
+<p>
+    completions = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        max_tokens=1024,
+        n=1,
+        stop=None,
+        temperature=0.5,
+    )    
+</p>
 <center>
 
 <h1>talking with AI</h1>
