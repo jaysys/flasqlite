@@ -8,10 +8,12 @@ from bokeh.embed import components
 from bokeh.plotting import figure, show
 from bokeh.resources import INLINE
 from bokeh.models import DatetimeTickFormatter, NumeralTickFormatter
+import openai
 
 try:
     db_conn = os.environ.get('DBCONN')
-    print(db_conn)
+    openai.api_key = os.environ.get('OPENAI')
+    #print(db_conn,openai.api_key)
 except:
     pass
 
@@ -284,6 +286,26 @@ def tyscript():
     print(data)
 
     return render_template('tyscript.html', data=data)
+
+@app.route("/gpt")
+def gpt():
+    return render_template("chat.html")
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    prompt = request.form["prompt"]
+    completions = openai.Completion.create(
+        engine="text-davinci-002",
+        prompt=prompt,
+        max_tokens=1024,
+        n=1,
+        stop=None,
+        temperature=0.5,
+    )
+
+    message = completions.choices[0].text
+    return message
+
 
 
 with app.test_request_context():
