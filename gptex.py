@@ -26,7 +26,7 @@ def run(k, q):
 
 if __name__ == "__main__":
     
-    question = "show me chatGPT.html"
+    question = "make a code for me to communicate on the chat box with chatGPT in python"
 
     answer = run(API_KEY, question)
     print(answer)
