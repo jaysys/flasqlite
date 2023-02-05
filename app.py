@@ -294,6 +294,7 @@ def tyscript():
 
     return render_template('tyscript.html', data=data)
 
+
 @app.route("/gpt")
 def gpt():
     return render_template("chat.html")

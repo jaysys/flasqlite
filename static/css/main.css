@@ -3,10 +3,10 @@
     font-family: sans-serif;
     background-color: lightblue;
 } */
-
+/*#class  .id*/
 .content {
     margin: 0 auto;
-    width: 400px;
+    width: 1000px;
 }
 
 table, td, th {
@@ -31,9 +31,9 @@ td {
     margin-top: 20px;
 }
 
-#content {
+/* #content {
     width: 70%;
-}
+} */
 
 .grid-container {
     display: grid;

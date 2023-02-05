@@ -2,26 +2,32 @@
 
 {% block head %}
 <title>flask & postgresql playground</title>
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+</style>
 {% endblock %}
 
 {% block body %}
 <div class="content">
-    <h1 style="text-align: center">Task 마스터 web</h1>
+    <h1 style="text-align: center">The playground</h1>
     {% if tasks|length < 1 %}
     <h4 style="text-align: center">There are no tasks. Create one below!</h4>
     {% else %}
     <table>
         <tr>
-            <th>Task</th>
-            <th>Added</th>
-            <th>Completed</th>
+            <th>Task(item#)</th>
+            <th>Completed(explained!!!)</th>
+            <th>Updated</th>
             <th>Actions</th>         
         </tr>
         {% for task in tasks %}
             <tr>
                 <td>{{ task.content }}</td>
-                <td>{{ task.date_created.date() }}</td>
-                <td>{{ task.completed }}</td>
+                <td>{{ task.completed }} </td>
+                <td>{{ task.date_created.date()}} </td>
                 <td>
                     <a href="/delete/{{task.id}}">Delete</a>
                     <br>
@@ -35,7 +41,7 @@
     <div class="form">
         <form action="/task" method="POST">
             <input type="text" name="content" id="content">
-            <input type="text" name="completed" id="completed">
+            <input size="100" type="text" name="completed" id="completed">
             <input type="submit" value="Add Task">
         </form>
     </div>
