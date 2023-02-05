@@ -1,8 +1,8 @@
-body, html {
-    margin: 0;
+/* body, html {
+    margin: 1;
     font-family: sans-serif;
     background-color: lightblue;
-}
+} */
 
 .content {
     margin: 0 auto;
@@ -13,10 +13,10 @@ table, td, th {
     border: 1px solid #aaa;
 }
 
-table {
+/* table {
     border-collapse: collapse;
     width: 100%;
-}
+} */
 
 th {
     height: 30px;
@@ -41,7 +41,7 @@ td {
     grid-gap: 20px;
 }
 
-.stage {
+/* .stage {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -61,7 +61,7 @@ td {
     color: #9880ff;
     box-shadow: 9984px 0 0 0 #9880ff, 9999px 0 0 0 #9880ff, 10014px 0 0 0 #9880ff;
     animation: dotTyping 1.5s infinite linear;
-  }
+  } */
   
   @keyframes dotTyping {
     0% {
