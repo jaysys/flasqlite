@@ -313,9 +313,10 @@ def chat():
     )
 
     message = completions.choices[0].text
-    aa = message.replace("\n","<br />\n")
-    ans = aa.replace("\t","&nbsp&nbsp&nbsp&nbsp")
-    print(ans)
+    # aa = message.replace("\n","<br />\n")
+    # ans = aa.replace("\t","&nbsp&nbsp&nbsp&nbsp")
+    print(message)
+    ans = "<pre>" + message + "</pre>"
     return ans
 
 
