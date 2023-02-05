@@ -42,7 +42,11 @@ def index():
 
 @app.route("/exam")
 def exam():
-    return render_template('exam70.html')
+    return render_template('exam70.html') #통신
+
+@app.route("/exam2")
+def exam2():
+    return render_template('exam02.html') #건축
 
 @app.route('/task', methods=['POST', 'GET'])
 def task():
