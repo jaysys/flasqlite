@@ -302,6 +302,7 @@ def gpt():
 @app.route("/chat", methods=["POST"])
 def chat():
     prompt = request.form["prompt"]
+    print(prompt)
     completions = openai.Completion.create(
         engine="text-davinci-003",
         prompt=prompt,
@@ -312,7 +313,10 @@ def chat():
     )
 
     message = completions.choices[0].text
-    return message
+    aa = message.replace("\n","<br />\n")
+    ans = aa.replace("\t","&nbsp&nbsp&nbsp&nbsp")
+    print(ans)
+    return ans
 
 
 

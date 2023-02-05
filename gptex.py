@@ -21,17 +21,23 @@ def run(k, q):
     )
 
     a = completions.choices[0].text
-    return (a)
+    print(type(a), len(a), len(completions.choices))
+    
+    aa=a.replace("\n","<br />\n")
+    aa=aa.replace("\t","&nbsp&nbsp&nbsp&nbsp")
+    return (aa)
 
 
 if __name__ == "__main__":
     
-    question = "make 3 page technical report on IoT introudction"
+    question = "python sample code which add 1 to 10" # make 3 page technical report on IoT introduction"
     '''
-    "make 3 page technical report on IoT introudction"
+    "python sample code which add 1 to 10"
     '''
 
     answer = run(API_KEY, question)
     print(answer)
 
-    
+'''
+
+'''

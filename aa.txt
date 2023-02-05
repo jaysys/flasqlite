@@ -1,0 +1,9 @@
+<class 'str'> 67 1
+<br />
+<br />
+total = 0<br />
+<br />
+for num in range(1,11):<br />
+    total += num<br />
+<br />
+print(total)
