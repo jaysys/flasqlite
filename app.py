@@ -40,6 +40,9 @@ class Todo(db.Model):
 def index():
     return render_template('./index.html')
 
+@app.route("/exam")
+def exam():
+    return render_template('exam70.html')
 
 @app.route('/task', methods=['POST', 'GET'])
 def task():
