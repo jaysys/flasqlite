@@ -30,14 +30,14 @@ def run(k, q):
 if __name__ == "__main__":
     
     qq1 = "python sample code which add 1 to 10"
-    qq2 = "make 3 page technical report on IoT introduction"
-    qq3 = "대한민국은 어떤 나라인가?"
+    qq2 = "make 3 page report on south korea"
+    qq3 = "대한민국을 소개해 주세요"
 
-    question = qq3
+    question = qq2
 
     answer = run(API_KEY, question)
     print(answer)
 
 '''
-
 '''
+
