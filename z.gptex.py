@@ -23,17 +23,17 @@ def run(k, q):
     a = completions.choices[0].text
     print(type(a), len(a), len(completions.choices))
     
-    aa=a.replace("\n","<br />\n")
-    aa=aa.replace("\t","&nbsp&nbsp&nbsp&nbsp")
-    return (aa)
+    #aa=a.replace("\n","<br />\n")
+    return (a)
 
 
 if __name__ == "__main__":
     
-    question = "python sample code which add 1 to 10" # make 3 page technical report on IoT introduction"
-    '''
-    "python sample code which add 1 to 10"
-    '''
+    qq1 = "python sample code which add 1 to 10"
+    qq2 = "make 3 page technical report on IoT introduction"
+    qq3 = "대한민국은 어떤 나라인가?"
+
+    question = qq3
 
     answer = run(API_KEY, question)
     print(answer)
