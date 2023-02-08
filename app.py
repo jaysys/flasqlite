@@ -316,7 +316,7 @@ def chat():
     # aa = message.replace("\n","<br />\n")
     # ans = aa.replace("\t","&nbsp&nbsp&nbsp&nbsp")
     print(message)
-    ans = "<pre>" + message + "</pre>"
+    ans = message
     return ans
 
 

@@ -4,10 +4,8 @@ import os
 API_KEY = os.environ.get('OPENAI')
 
 def run(k, q):
-    # Set the API key
-    openai.api_key = k
 
-    # Generate text using the GPT-3 model
+    openai.api_key = k
     model_engine = "text-davinci-003"
     question = q
 
@@ -31,13 +29,8 @@ if __name__ == "__main__":
     
     qq1 = "python sample code which add 1 to 10"
     qq2 = "make 3 page report on south korea"
-    qq3 = "대한민국을 소개해 주세요"
-
-    question = qq2
+    qq3 = "대한민국에 대한 3페이지 리포트 만들어 주세요"
+    question = qq3
 
     answer = run(API_KEY, question)
     print(answer)
-
-'''
-'''
-

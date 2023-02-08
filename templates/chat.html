@@ -9,29 +9,37 @@
 {% block body %}
 <br>
 <br>
-
-
-<h1>talking with AI, GPT3</h1>
+<h1>talk with AI, GPT3</h1>
 <form action="/chat" method="post">
     <input type="text" name="prompt" maxlength="3000" size="100">
     <input type="submit" value="Submit">
 </form>
-<div id="chat-output"></div>
+<br>
+<div id="chat-prompt"></div>
+<form >
+    <textarea cols="120" rows="40" id="chat-output" > </textarea>
+</form>
+
+
+
 <script>
     const form = document.querySelector("form");
     form.addEventListener("submit", event => {
-    event.preventDefault();
-    const input = form.querySelector("input");
-    const prompt = input.value;
-    input.value = "";
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/chat");
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.onload = () => {
-        const chatOutput = document.querySelector("#chat-output");
-        chatOutput.innerHTML = xhr.responseText;
-    };
-    xhr.send(`prompt=${encodeURIComponent(prompt)}`);
+        event.preventDefault();
+        const input = form.querySelector("input");
+        const prompt = input.value;
+        input.value = "";
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/chat");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onload = () => {
+            const chatPrompt = document.querySelector("#chat-prompt");
+            chatPrompt.innerHTML = "Qry:" + prompt;
+            const chatOutput = document.querySelector("#chat-output");
+            chatOutput.innerHTML = xhr.responseText;
+            
+        };
+        xhr.send(`prompt=${encodeURIComponent(prompt)}`);
     });
 </script>
 
