@@ -184,7 +184,8 @@ def dfbokeh():
         # df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp ORDER BY timestamp desc", conn)
         df_div = pd.read_sql("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp ORDER BY timestamp desc", conn, index_col=None)
         df_div_stock = pd.read_sql("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset WHERE div = 'STOCK' GROUP BY timestamp, div ORDER BY timestamp desc", conn, index_col=None)
-        df_div_crypto = pd.read_sql("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset WHERE div = 'CRYPTO' GROUP BY timestamp, div ORDER BY timestamp desc", conn, index_col=None)        
+        df_div_crypto = pd.read_sql("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset WHERE div = 'CRYPTO' GROUP BY timestamp, div ORDER BY timestamp desc", conn, index_col=None)
+        df_div_cash = pd.read_sql("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset WHERE div = 'CASH' GROUP BY timestamp, div ORDER BY timestamp desc", conn, index_col=None)            
         #print(df_div)#.to_markdown(floatfmt=',.2f'))
 
 
@@ -249,6 +250,24 @@ def dfbokeh():
     #fig3.sizing_mode = 'scale_width'
 
 
+    '''
+    '''
+    rows = df_div_cash.shape[0]
+    cols = df_div_cash.shape[1]
+    total_cash = '{:,}'.format(df_div_cash['total'][0])   #'{:,}'.format(value)
+    date4 = (df_div_cash['date'][0])
+    print(">>stock_cash>>",rows,cols,date3,total_cash, "<<<")
+    fig4 = figure(width=1000, height=500 ) #, tools=[HoverTool()], tooltips="@x == @y",)
+    ax4 = pd.to_datetime(df_div_cash["date"])
+    ay4 = df_div_cash['total'] 
+    #fig4.circle(ax3, ay3 , size=1, color="black", alpha=1)#, x_axis_type="datetime")
+    fig4.line(ax4, ay4, color="green", alpha=1)#, x_axis_type="datetime")
+    fig4.yaxis[0].formatter = NumeralTickFormatter(format="0,0")
+    fig4.xaxis[0].formatter = DatetimeTickFormatter(months="%F")
+    #fig4.xgrid.grid_line_color = "olive"
+    fig4.ygrid.band_fill_color = "olive"
+    fig4.ygrid.band_fill_alpha = 0.1
+    #fig4.sizing_mode = 'scale_width'
 
 
 
@@ -260,14 +279,20 @@ def dfbokeh():
     script, div = components(fig)
     script2, div2 = components(fig2)
     script3, div3 = components(fig3)
+    
+    script4, div4 = components(fig4)
     html = render_template(
         'dfbokeh.html',
         plot_script=script,
         plot_script_stock=script2,
         plot_script_crypto=script3,
+        plot_script_cash=script4,
+
         plot_div=div,
         plot_div_stock = div2,
         plot_div_crypto = div3,
+        plot_div_cash = div4,
+        
         js_resources=js_resources,
         css_resources=css_resources,
         total = total,
@@ -275,7 +300,9 @@ def dfbokeh():
         total_stock = total_stock,
         date2 = date2,
         total_crypto = total_crypto,
-        date3 = date3
+        date3 = date3,
+        total_cash = total_cash,
+        date4 = date4
     )
     return (html)
 

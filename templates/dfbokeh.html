@@ -11,6 +11,7 @@
 {{ plot_script|indent(4)|safe }}
 {{ plot_script_stock|indent(4)|safe }}
 {{ plot_script_crypto|indent(4)|safe }}
+{{ plot_script_cash|indent(4)|safe }}
 {% endblock %}
 
 {% block body %}
@@ -30,5 +31,11 @@
     <h1>:)3</h1>
     <p>Total_crypto: {{total_crypto}}, last updated: {{date3}}</p>
     {{ plot_div_crypto|indent(4)|safe }}
+</center>
+
+<center>
+    <h1>:)4</h1>
+    <p>Total_cash: {{total_cash}}, last updated: {{date4}}</p>
+    {{ plot_div_cash|indent(4)|safe }}
 </center>
 {% endblock %}
