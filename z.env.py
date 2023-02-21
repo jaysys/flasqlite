@@ -41,13 +41,37 @@ qr_each_div_sum4 = "select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') a
 '''
 '''
 
-df_stock = pd.read_sql( qr_each_div_sum3, conn)
-print(df_stock) 
+# df_stock = pd.read_sql( qr_each_div_sum3, conn)
+# print(df_stock) 
 
-df_stock = pd.read_sql( qr_each_div_sum4, conn)
-print(df_stock) 
+qr_timestamp = "select CURRENT_TIMESTAMP"
+qra = "select timestamp from my_asset order by timestamp desc limit 1"
 
+df_stock = pd.read_sql(qra, conn, index_col = None)
+print(df_stock) 
 conn.close()
+
+
+
+import psycopg2
+conn = psycopg2.connect(db_conn)
+cur = conn.cursor()
+cur.execute( qra )
+a = []
+for row in cur.fetchall():
+    a.append(row)
+cur.close()
+conn.close()
+
+
+print(a[0])
+
+
+
+
+
+
+
 
 
 
