@@ -133,6 +133,10 @@ def tailcss():
     )
     return (html)
 
+# Function to format number with commas
+def format_with_commas(number):
+    return "{:,}".format(number)
+
 
 @app.route('/history')
 def history():
@@ -144,16 +148,14 @@ def history():
         #df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp, div ORDER BY timestamp desc", conn)
         df_div = pd.read_sql("select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, asset_note, round(sum(total_krw)) as total_krw from my_asset group by div, asset_note, timestamp order by timestamp desc limit 12", conn)
     
+    df_div['total_krw'] = df_div['total_krw'].apply(format_with_commas)
     html_table = df_div.to_html(classes='dfmystyle') #####!
 
     #write html to file
     # with open("templates/history_t.html", "w") as text_file:
     #     text_file.write(html_table)
 
-    html = render_template(
-            'history.html',
-            tab = html_table
-        )
+    html = render_template('history.html', tab = html_table)
     return (html)
 
 
