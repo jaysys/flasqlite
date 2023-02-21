@@ -31,7 +31,25 @@ qr_each_div_sum = "select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as
 
 qr_each_div_sum2 = "select timestamp::timestamp as date, div, round(sum(total_krw)) as total_krw from my_asset group by div, timestamp order by timestamp asc"
 
-qr_each_div_sum3 = "select timestamp::timestamp as date, div, asset_note, round(sum(total_krw)) as total_krw from my_asset group by div, asset_note, timestamp order by timestamp asc"
+qr_each_div_sum3 = "select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, asset_note, round(sum(total_krw)) as total_krw from my_asset group by div, asset_note, timestamp order by timestamp desc limit 9"
+
+qr_each_div_sum4 = "select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, round(sum(total_krw)) as total_krw from my_asset group by div, timestamp order by timestamp desc limit 3"
+
+# "SELECT timestamp, div, round(sum(total_krw)) as total FROM my_asset WHERE div = 'STOCK' GROUP BY div, timestamp ORDER BY timestamp DESC LIMIT 20 ;",
+
+
+'''
+'''
+
+df_stock = pd.read_sql( qr_each_div_sum3, conn)
+print(df_stock) 
+
+df_stock = pd.read_sql( qr_each_div_sum4, conn)
+print(df_stock) 
+
+conn.close()
+
+
 
 '''
 pandas 이용한 query
@@ -45,20 +63,23 @@ pandas 이용한 query
 
 '''
 '''
-timestamp_str = '2023-02-21 00:00:00'  # replace with your desired timestamp
-timestamp = datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')
-sql_query = "SELECT * FROM my_asset WHERE timestamp >= %s ORDER BY timestamp ASC;"
+# timestamp_str = '2023-02-21 00:00:00'  # replace with your desired timestamp
+# timestamp = datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')
+# sql_query = "SELECT * FROM my_asset WHERE timestamp >= %s ORDER BY timestamp ASC;"
 
-import psycopg2 as mydb
-mydbconn = mydb.connect("~~ ")
-cursor = mydb.conn.cursor()
-cursor.execute(sql_query, (timestamp,))
-data = cursor.fetchall()
+# import psycopg2 as mydb
+# mydbconn = mydb.connect("~~ ")
+# cursor = mydb.conn.cursor()
+# cursor.execute(sql_query, (timestamp,))
+# data = cursor.fetchall()
 
-for row in data:
-    print(row)
+# for row in data:
+#     print(row)
 
-mydbconn.close()
+# mydbconn.close()
+
+
+
 
 # '''
 # raw sql query

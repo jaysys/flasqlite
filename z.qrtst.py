@@ -1,7 +1,7 @@
-import pandas as pd
-from sqlalchemy import create_engine 
-import psycopg2
 import os
+import pandas as pd
+import psycopg2
+from sqlalchemy import create_engine 
 
 '''
 Sample Dataframe data
@@ -11,7 +11,7 @@ data = {'name': ['John', 'Bick', 'Cherry'],
 
 
 '''
-DB connection
+DB connection w/sqlachmey
 ''' 
 try:
     conn_string = os.environ.get('DBCONN')  # export DBCONN='postgresql://aaa:pwd@0.0.0.0:8888/mydb'
@@ -44,6 +44,7 @@ conn_string = conn_string
 conn2 = psycopg2.connect(conn_string)
 conn2.autocommit = True
 
+
 # read
 cursor = conn2.cursor()
 sql1 = '''select * from pandas_data;'''
@@ -51,6 +52,7 @@ cursor.execute(sql1)
 print("[1]")
 for i in cursor.fetchall():
 	print(i)
+
 
 # insert
 sql2 = '''INSERT INTO pandas_data(index, name, age) VALUES (0, 'Hong', 23);'''
@@ -60,6 +62,7 @@ cursor.execute(sql1)
 print("[2]")
 for i in cursor.fetchall():
 	print(i)
+
 
 # update
 sql3 = '''UPDATE pandas_data SET name = 'CHONG', age = 39  WHERE index = 0;'''
