@@ -1,14 +1,14 @@
 import os
+import openai
+import pandas as pd
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-import pandas as pd
 from sqlalchemy import create_engine
 from bokeh.embed import components
 from bokeh.plotting import figure, show
 from bokeh.resources import INLINE
 from bokeh.models import DatetimeTickFormatter, NumeralTickFormatter
-import openai
 
 try:
     db_conn = os.environ.get('DBCONN')
@@ -22,11 +22,12 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = db_conn  # 'postgresql://id:password@127.0.0.1:port/dbname'
 with app.app_context():
     db = SQLAlchemy(app)
-
+    
+'''
+DB table
+'''
 class Todo(db.Model):
-    '''
-    DB table
-    '''
+
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(200), nullable=False)
     completed = db.Column(db.String(100), nullable=True)
@@ -40,13 +41,6 @@ class Todo(db.Model):
 def index():
     return render_template('./index.html')
 
-@app.route("/exam")
-def exam():
-    return render_template('exam70.html') #통신
-
-@app.route("/exam2")
-def exam2():
-    return render_template('exam02.html') #건축
 
 @app.route('/task', methods=['POST', 'GET'])
 def task():
@@ -96,70 +90,42 @@ def update(id):
         return render_template('update.html', task=task)
 
 
+
+
 @app.route('/meta')
 def meta():
     return render_template('meta.html')
 
 
-@app.route('/bokeh')
-def bokeh():
-    # init a basic bar chart:
-    # http://bokeh.pydata.org/en/latest/docs/user_guide/plotting.html#bars
-    fig = figure(width=600, height=400)
-    ax = [1, 2, 3, 4, 5]
-    ay = [6, 7, 2, 4, 5]
-    fig.circle(ax, ay , size=5, color="red", alpha=0.8)
-    # fig.vbar( x=[0,1,2,3,4,5,6], top=[11.7, 12.2, 14.6, 13.9,5,16,12] ,width=0.2, bottom=0, color='green')
 
-    # grab the static resources
-    js_resources = INLINE.render_js()
-    css_resources = INLINE.render_css()
 
-    # render template
-    script, div = components(fig)
-    html = render_template(
-        'bokeh.html',
-        plot_script = script,
-        plot_div = div,
-        js_resources = js_resources,
-        css_resources = css_resources,
+
+@app.route("/gpt")
+def gpt():
+    return render_template("chat.html")
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    prompt = request.form["prompt"]
+    print(prompt)
+    completions = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        max_tokens=1024,
+        n=1,
+        stop=None,
+        temperature=0.5,
     )
-    return (html)
-    
-@app.route('/tailcss')
-def tailcss():
-    html = render_template(
-        'tailcss.html'
-    )
-    return (html)
 
-# Function to format number with commas
-def format_with_commas(number):
-    return "{:,}".format(number)
+    message = completions.choices[0].text
+    # aa = message.replace("\n","<br />\n")
+    # ans = aa.replace("\t","&nbsp&nbsp&nbsp&nbsp")
+    print(message)
+    ans = message
+    return ans
 
 
-@app.route('/history')
-def history():
-    db = create_engine(db_conn)
-    conn = db.connect()
-    print("[db_connection]",db,conn)
-
-    if True:
-        #df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp, div ORDER BY timestamp desc", conn)
-        df_div = pd.read_sql("select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, asset_note, round(sum(total_krw)) as total_krw from my_asset group by div, asset_note, timestamp order by timestamp desc limit 12", conn)
-    
-    df_div['total_krw'] = df_div['total_krw'].apply(format_with_commas)
-    html_table = df_div.to_html(classes='dfmystyle') #####!
-
-    #write html to file
-    # with open("templates/history_t.html", "w") as text_file:
-    #     text_file.write(html_table)
-
-    html = render_template('history.html', tab = html_table)
-    return (html)
-
-
-
+   
 
 @app.route('/dfbokeh')
 def dfbokeh():
@@ -294,6 +260,63 @@ def dfbokeh():
     return (html)
 
 
+
+
+
+
+# Function to format number with commas
+def format_with_commas(number):
+    return "{:,}".format(number)
+
+
+@app.route('/history')
+def history():
+    db = create_engine(db_conn)
+    conn = db.connect()
+    print("[db_connection]",db,conn)
+
+    if True:
+        #df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp, div ORDER BY timestamp desc", conn)
+        df_div = pd.read_sql("select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, asset_note, round(sum(total_krw)) as total_krw from my_asset group by div, asset_note, timestamp order by timestamp desc limit 12", conn)
+    
+    df_div['total_krw'] = df_div['total_krw'].apply(format_with_commas)
+    html_table = df_div.to_html(classes='dfmystyle') #####!
+
+    #write html to file
+    # with open("templates/history_t.html", "w") as text_file:
+    #     text_file.write(html_table)
+
+    html = render_template('history.html', tab = html_table)
+    return (html)
+
+
+
+@app.route('/bokeh')
+def bokeh():
+    # init a basic bar chart:
+    # http://bokeh.pydata.org/en/latest/docs/user_guide/plotting.html#bars
+    fig = figure(width=600, height=400)
+    ax = [1, 2, 3, 4, 5]
+    ay = [6, 7, 2, 4, 5]
+    fig.circle(ax, ay , size=5, color="red", alpha=0.8)
+    # fig.vbar( x=[0,1,2,3,4,5,6], top=[11.7, 12.2, 14.6, 13.9,5,16,12] ,width=0.2, bottom=0, color='green')
+
+    # grab the static resources
+    js_resources = INLINE.render_js()
+    css_resources = INLINE.render_css()
+
+    # render template
+    script, div = components(fig)
+    html = render_template(
+        'bokeh.html',
+        plot_script = script,
+        plot_div = div,
+        js_resources = js_resources,
+        css_resources = css_resources,
+    )
+    return (html)
+ 
+
 @app.route('/tyscript', methods=["GET"]) #
 def tyscript():
     # Create or load a dataframe
@@ -309,36 +332,28 @@ def tyscript():
     return render_template('tyscript.html', data=data)
 
 
-@app.route("/gpt")
-def gpt():
-    return render_template("chat.html")
 
-@app.route("/chat", methods=["POST"])
-def chat():
-    prompt = request.form["prompt"]
-    print(prompt)
-    completions = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=1024,
-        n=1,
-        stop=None,
-        temperature=0.5,
+@app.route('/tailcss')
+def tailcss():
+    html = render_template(
+        'tailcss.html'
     )
+    return (html)
 
-    message = completions.choices[0].text
-    # aa = message.replace("\n","<br />\n")
-    # ans = aa.replace("\t","&nbsp&nbsp&nbsp&nbsp")
-    print(message)
-    ans = message
-    return ans
+
+@app.route("/exam")
+def exam():
+    return render_template('exam70.html') #통신
+
+@app.route("/exam2")
+def exam2():
+    return render_template('exam02.html') #건축
 
 
 
 with app.test_request_context():
     print (url_for('meta'))  
     print (url_for('dfbokeh'))  
-
 
 
 if __name__ == "__main__":
