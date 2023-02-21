@@ -128,23 +128,8 @@ def bokeh():
     
 @app.route('/tailcss')
 def tailcss():
-    fig = figure(width=600, height=400)
-    ax = [1, 2, 3, 4, 5]
-    ay = [6, 7, 2, 4, 5]
-    fig.circle(ax, ay , size=5, color="red", alpha=0.8)
-    
-    # grab the static resources
-    js_resources = INLINE.render_js()
-    css_resources = INLINE.render_css()
-
-    # render template
-    script, div = components(fig)
     html = render_template(
-        'tailcss.html',
-        js_resources=js_resources,
-        css_resources=css_resources,
-        plot_script=script,
-        plot_div=div
+        'tailcss.html'
     )
     return (html)
 
@@ -164,9 +149,6 @@ def history():
     #write html to file
     # with open("templates/history_t.html", "w") as text_file:
     #     text_file.write(html_table)
-
-    # print(df_div)#.to_markdown(floatfmt=',.2f'))
-    # return render_template('history.html')
 
     html = render_template(
             'history.html',
