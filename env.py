@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+from datetime import datetime
 
 home = os.environ.get('HOME')
 os.environ.get('HOME')
@@ -30,41 +31,64 @@ qr_each_div_sum = "select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as
 
 qr_each_div_sum2 = "select timestamp::timestamp as date, div, round(sum(total_krw)) as total_krw from my_asset group by div, timestamp order by timestamp asc"
 
+qr_each_div_sum3 = "select timestamp::timestamp as date, div, asset_note, round(sum(total_krw)) as total_krw from my_asset group by div, asset_note, timestamp order by timestamp asc"
+
 '''
 pandas 이용한 query
 '''
-# df = pd.read_sql(qr_each_div_sum, conn)
-# print(df)
+# print("----")
+# df = pd.read_sql(qr_each_div_sum3, conn)
+# from tabulate import tabulate
+# print(tabulate(df))
+# print("----")
+
 
 '''
-raw sql query
 '''
-from pprint import pprint
-crypto = []
-stock = []
-cash = []
-date = []
-with db.connect() as con:
-    rs = con.execute(qr_each_div_sum2)
-    for row in rs:
-        if row[1] == 'CRYPTO':
-            date.append(row[0])
-            crypto.append(row[2])
-        elif row[1] == 'STOCK':
-            stock.append(row[2])
-        elif row[1] == 'CASH':
-            cash.append(row[2])
-        else:
-            pass
+timestamp_str = '2023-02-21 00:00:00'  # replace with your desired timestamp
+timestamp = datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')
+sql_query = "SELECT * FROM my_asset WHERE timestamp >= %s ORDER BY timestamp ASC;"
+
+import psycopg2 as mydb
+mydbconn = mydb.connect("~~ ")
+cursor = mydb.conn.cursor()
+cursor.execute(sql_query, (timestamp,))
+data = cursor.fetchall()
+
+for row in data:
+    print(row)
+
+mydbconn.close()
+
+# '''
+# raw sql query
+# '''
+# from pprint import pprint
+# crypto = []
+# stock = []
+# cash = []
+# date = []
+# with db.connect() as con:
+#     rs = con.execute(qr_each_div_sum2)
+#     for row in rs:
+#         if row[1] == 'CRYPTO':
+#             date.append(row[0])
+#             crypto.append(row[2])
+#         elif row[1] == 'STOCK':
+#             stock.append(row[2])
+#         elif row[1] == 'CASH':
+#             cash.append(row[2])
+#         else:
+#             pass
     
 
-import matplotlib.pyplot as plt
-dframe = pd.DataFrame({
-    'crypto': crypto,
-    'stock': stock,
-    'cash': cash,}, 
-    index=date)
-print(dframe)
+# import matplotlib.pyplot as plt
+# dframe = pd.DataFrame({
+#     'crypto': crypto,
+#     'stock': stock,
+#     'cash': cash,}, 
+#     index=date)
+# print(dframe)
 
 
 '''
@@ -74,32 +98,32 @@ print(dframe)
 # plt.show()
 
 
-'''
-2.보케 누적영역라인
-'''
-from bokeh.palettes import brewer
-from bokeh.palettes import Spectral11
-from bokeh.plotting import figure, show, output_notebook
-n = dframe.shape[1]
-p = figure(width=1000, height=600, x_axis_type='datetime')
-p.varea_stack(stackers=dframe.columns, 
-            x='index', 
-            source=dframe, 
-            color=brewer['Spectral'][n])
-show(p)
+# '''
+# 2.보케 누적영역라인
+# '''
+# from bokeh.palettes import brewer
+# from bokeh.palettes import Spectral11
+# from bokeh.plotting import figure, show, output_notebook
+# n = dframe.shape[1]
+# p = figure(width=1000, height=600, x_axis_type='datetime')
+# p.varea_stack(stackers=dframe.columns, 
+#             x='index', 
+#             source=dframe, 
+#             color=brewer['Spectral'][n])
+# show(p)
 
 
-'''
-3.보케 멀티싱글라인
-'''
-numlines = len(dframe.columns)
-mypalette = Spectral11[0:numlines]
-p = figure(width=1000, height=600, x_axis_type="datetime") 
-p.multi_line(xs = [dframe.index.values]*numlines,
-            ys = [dframe[name].values for name in dframe],
-            line_color = mypalette,
-            line_width = 1.5)
-show(p)
+# '''
+# 3.보케 멀티싱글라인
+# '''
+# numlines = len(dframe.columns)
+# mypalette = Spectral11[0:numlines]
+# p = figure(width=1000, height=600, x_axis_type="datetime") 
+# p.multi_line(xs = [dframe.index.values]*numlines,
+#             ys = [dframe[name].values for name in dframe],
+#             line_color = mypalette,
+#             line_width = 1.5)
+# show(p)
 
 
 # qr_crypto = "select div, to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, round(sum(total_krw)) as total_krw from my_asset where div = 'CRYPTO' group by div, timestamp order by timestamp desc"

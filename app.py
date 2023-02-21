@@ -105,18 +105,12 @@ def meta():
 def bokeh():
     # init a basic bar chart:
     # http://bokeh.pydata.org/en/latest/docs/user_guide/plotting.html#bars
-
     fig = figure(width=600, height=400)
-
-    # fig.vbar(
-    #     x=[0,1,2,3,4,5,6],
-    #     top=[11.7, 12.2, 14.6, 13.9,5,16,12] #,width=0.2, bottom=0, color='green'
-    # )
-
     ax = [1, 2, 3, 4, 5]
     ay = [6, 7, 2, 4, 5]
     fig.circle(ax, ay , size=5, color="red", alpha=0.8)
-    
+    # fig.vbar( x=[0,1,2,3,4,5,6], top=[11.7, 12.2, 14.6, 13.9,5,16,12] ,width=0.2, bottom=0, color='green')
+
     # grab the static resources
     js_resources = INLINE.render_js()
     css_resources = INLINE.render_css()
@@ -125,10 +119,10 @@ def bokeh():
     script, div = components(fig)
     html = render_template(
         'bokeh.html',
-        plot_script=script,
-        plot_div=div,
-        js_resources=js_resources,
-        css_resources=css_resources,
+        plot_script = script,
+        plot_div = div,
+        js_resources = js_resources,
+        css_resources = css_resources,
     )
     return (html)
     
@@ -147,10 +141,10 @@ def tailcss():
     script, div = components(fig)
     html = render_template(
         'tailcss.html',
-        plot_script=script,
-        plot_div=div,
         js_resources=js_resources,
         css_resources=css_resources,
+        plot_script=script,
+        plot_div=div
     )
     return (html)
 

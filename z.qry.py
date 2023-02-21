@@ -40,7 +40,7 @@ conn.close()
 Read by Rraw_sql_query with psycopg2
 '''
 # connect - psycopg2 use case
-conn_string = 'postgresql://jaysys:234567@svc.gksl2.cloudtype.app:32023/mydb'
+conn_string = conn_string
 conn2 = psycopg2.connect(conn_string)
 conn2.autocommit = True
 
