@@ -314,8 +314,9 @@ def history():
 
 
 
-
-
+'''
+paginated data browsing
+'''
 # Define the database connection
 engine = create_engine(db_conn)
 # Set the number of rows to show per page
