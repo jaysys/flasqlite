@@ -314,6 +314,47 @@ def history():
 
 
 
+
+
+# Define the database connection
+engine = create_engine(db_conn)
+# Set the number of rows to show per page
+ROWS_PER_PAGE = 28
+
+@app.route('/transaction')
+def transaction():
+    if 'username' in session:
+        username = session['username']
+
+        # Get the page number from the request arguments
+        page = request.args.get('page', default=1, type=int)
+
+        # Calculate the starting index and ending index for the page
+        start_index = (page - 1) * ROWS_PER_PAGE
+        end_index = start_index + ROWS_PER_PAGE
+
+        # Query the database for the rows to display on this page
+        query = f"SELECT div, asset, to_char(qty,'9,999,999,999.999') as qty, to_char(total_krw,'9,999,999,999.9') as total_krw, asset_note, timestamp FROM my_asset order by timestamp desc LIMIT {ROWS_PER_PAGE} OFFSET {start_index}"
+        df = pd.read_sql(query, engine)
+
+        # Check if there are any more rows to display
+        has_next_page = len(df) == ROWS_PER_PAGE
+
+        # Disable previous button on first page
+        has_prev_page = page > 1
+
+        # Render the template with the data
+        return render_template('transaction.html', transactions=df.to_dict('records'), 
+                            has_next_page=has_next_page, has_prev_page=has_prev_page,
+                            next_page=page + 1, prev_page=page - 1, username=username)
+    
+    else:
+        return redirect(url_for('login'))
+
+
+
+
+
 '''
 bokeh excercise
 '''

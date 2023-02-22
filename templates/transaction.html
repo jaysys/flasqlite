@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>My transactions</title>
+{% endblock %}
+
+{% block body %}
+<h1>My transactions</h1>
+<table>
+    <thead>
+        <tr>
+            <th>div</th>
+            <th>asset</th>
+            <th>qty</th>
+            <th>total_krw</th>
+            <th>asset_note</th>
+            <th>timestamp</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for transaction in transactions %}
+        <tr>
+            <td>{{ transaction.div }}</td>
+            <td>{{ transaction.asset }}</td>
+            <td align="right">{{ transaction.qty }}</td>
+            <td align="right">{{ transaction.total_krw }}</td>
+            <td>{{ transaction.asset_note }}</td>
+            <td>{{ transaction.timestamp }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if has_prev_page %}
+<a href="{{ url_for('transaction', page=prev_page) }}">Previous</a>
+{% endif %}
+<a>[{{prev_page+1}}]</a>
+{% if has_next_page %}
+<a href="{{ url_for('transaction', page=next_page) }}">Next</a>
+{% endif %}
+
+{% endblock %}
