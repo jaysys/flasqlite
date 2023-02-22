@@ -1,7 +1,8 @@
 import os
 import openai
 import pandas as pd
-from flask import Flask, render_template, url_for, request, redirect
+import psycopg2
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from sqlalchemy import create_engine
@@ -18,14 +19,18 @@ except:
     pass
 
 app = Flask(__name__)
+
+app.config['SECRET_KEY'] = db_conn #'mysecretkey' - 일단같은걸로해서...
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = db_conn  # 'postgresql://id:password@127.0.0.1:port/dbname'
-with app.app_context():
-    db = SQLAlchemy(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = db_conn  #'postgresql://id:pwd@ip:port/dbname'
     
 '''
-DB table
+postgresql DB connect & crud web page excercise 
 '''
+
+with app.app_context():
+    db = SQLAlchemy(app)
+
 class Todo(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
@@ -39,26 +44,36 @@ class Todo(db.Model):
 
 @app.route("/")
 def index():
-    return render_template('./index.html')
+    if 'username' in session:
+        username = session['username']
+        return render_template('index.html', username=username)
+    else:
+        return redirect(url_for('login'))
+
+    # return render_template('index.html',username = 'aa')
 
 
 @app.route('/task', methods=['POST', 'GET'])
 def task():
-    if request.method == 'POST':
-        task_content = request.form['content']
-        task_completed = request.form['completed']
-        new_task = Todo(content=task_content, completed=task_completed)
+    if 'username' in session:
+        username = session['username']
+        #accessible only when logged in
+        if request.method == 'POST':
+            task_content = request.form['content']
+            task_completed = request.form['completed']
+            new_task = Todo(content=task_content, completed=task_completed)
 
-        try:
-            db.session.add(new_task)
-            db.session.commit()
-            return redirect('/task')
-        except:
-            return 'There was an issue adding your task'
+            try:
+                db.session.add(new_task)
+                db.session.commit()
+                return redirect('/task')
+            except:
+                return 'There was an issue adding your task'
+        else:
+            tasks = Todo.query.order_by(Todo.date_created).all()
+            return render_template('task.html', tasks=tasks, username=username)
     else:
-        tasks = Todo.query.order_by(Todo.date_created).all()
-        return render_template('task.html', tasks=tasks)
-
+        return redirect(url_for('login'))
 
 @app.route('/delete/<int:id>')
 def delete(id):
@@ -91,18 +106,27 @@ def update(id):
 
 
 
-
+'''
+metamask crypto web3 connect & query balance
+'''
 @app.route('/meta')
 def meta():
     return render_template('meta.html')
 
 
 
-
-
+'''
+chatGPT excercise
+'''
 @app.route("/gpt")
 def gpt():
-    return render_template("chat.html")
+    if 'username' in session:
+        username = session['username']
+        #accessible only when logged in
+        return render_template("chat.html", username=username)
+    else:
+        return redirect(url_for('login'))
+
 
 @app.route("/chat", methods=["POST"])
 def chat():
@@ -126,9 +150,11 @@ def chat():
 
 
    
-
+'''
+dataframe & bokeh combination excercise
+'''
 @app.route('/dfbokeh')
-def dfbokeh():
+def dfbokeh():   
     db = create_engine(db_conn)
     conn = db.connect()
     print("[db_connection]",db,conn)
@@ -142,8 +168,7 @@ def dfbokeh():
         #print(df_div)#.to_markdown(floatfmt=',.2f'))
 
 
-    '''
-    '''
+    ### ---
     rows = df_div.shape[0]
     cols = df_div.shape[1]
     total = '{:,}'.format(df_div['total'][0])   #'{:,}'.format(value)
@@ -162,8 +187,7 @@ def dfbokeh():
     #fig.sizing_mode = 'scale_width'
  
 
-    '''
-    '''
+    ### ---
     rows = df_div_stock.shape[0]
     cols = df_div_stock.shape[1]
     total_stock = '{:,}'.format(df_div_stock['total'][0])   #'{:,}'.format(value)
@@ -182,9 +206,7 @@ def dfbokeh():
     #fig2.sizing_mode = 'scale_width'
 
 
-
-    '''
-    '''
+    ### ---
     rows = df_div_crypto.shape[0]
     cols = df_div_crypto.shape[1]
     total_crypto = '{:,}'.format(df_div_crypto['total'][0])   #'{:,}'.format(value)
@@ -202,9 +224,7 @@ def dfbokeh():
     fig3.ygrid.band_fill_alpha = 0.1
     #fig3.sizing_mode = 'scale_width'
 
-
-    '''
-    '''
+    ### ---
     rows = df_div_cash.shape[0]
     cols = df_div_cash.shape[1]
     total_cash = '{:,}'.format(df_div_cash['total'][0])   #'{:,}'.format(value)
@@ -221,8 +241,6 @@ def dfbokeh():
     fig4.ygrid.band_fill_color = "olive"
     fig4.ygrid.band_fill_alpha = 0.1
     #fig4.sizing_mode = 'scale_width'
-
-
 
     # grab the static resources
     js_resources = INLINE.render_js()
@@ -262,35 +280,43 @@ def dfbokeh():
 
 
 
-
-
+'''
+pandas dataframe to_html() excercise
+'''
 # Function to format number with commas
 def format_with_commas(number):
     return "{:,}".format(number)
 
-
 @app.route('/history')
 def history():
-    db = create_engine(db_conn)
-    conn = db.connect()
-    print("[db_connection]",db,conn)
+    if 'username' in session:
+        username = session['username']
 
-    if True:
-        #df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp, div ORDER BY timestamp desc", conn)
-        df_div = pd.read_sql("select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, asset_note, round(sum(total_krw)) as total_krw from my_asset group by div, asset_note, timestamp order by timestamp desc limit 12", conn)
-    
-    df_div['total_krw'] = df_div['total_krw'].apply(format_with_commas)
-    html_table = df_div.to_html(classes='dfmystyle') #####!
+        db = create_engine(db_conn)
+        conn = db.connect()
+        print("[db_connection]",db,conn)
 
-    #write html to file
-    # with open("templates/history_t.html", "w") as text_file:
-    #     text_file.write(html_table)
+        if True:
+            #df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp, div ORDER BY timestamp desc", conn)
+            df_div = pd.read_sql("select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, asset_note, round(sum(total_krw)) as total_krw from my_asset group by div, asset_note, timestamp order by timestamp desc limit 12", conn)
+        
+        df_div['total_krw'] = df_div['total_krw'].apply(format_with_commas)
+        html_table = df_div.to_html(classes='dfmystyle') #####!
 
-    html = render_template('history.html', tab = html_table)
-    return (html)
+        #write html to file
+        # with open("templates/history_t.html", "w") as text_file:
+        #     text_file.write(html_table)
+
+        html = render_template('history.html', tab = html_table, username=username)
+        return (html)
+    else:
+        return redirect(url_for('login'))
 
 
 
+'''
+bokeh excercise
+'''
 @app.route('/bokeh')
 def bokeh():
     # init a basic bar chart:
@@ -317,6 +343,10 @@ def bokeh():
     return (html)
  
 
+
+'''
+typescript sample page
+'''
 @app.route('/tyscript', methods=["GET"]) #
 def tyscript():
     # Create or load a dataframe
@@ -333,6 +363,9 @@ def tyscript():
 
 
 
+'''
+sample html pages
+'''
 @app.route('/tailcss')
 def tailcss():
     html = render_template(
@@ -351,9 +384,58 @@ def exam2():
 
 
 
-with app.test_request_context():
-    print (url_for('meta'))  
-    print (url_for('dfbokeh'))  
+'''
+login function
+'''
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        conn = psycopg2.connect(app.config['SQLALCHEMY_DATABASE_URI'])
+        cur = conn.cursor()
+        cur.execute('SELECT * FROM users WHERE username = %s AND password = %s', (username, password))
+        user = cur.fetchone()
+        cur.close()
+        conn.close()
+        if user:
+            session['username'] = username
+            return redirect(url_for('index'))
+        else:
+            return render_template('login.html', error='Invalid username or password')
+    else:
+        return render_template('login.html')
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+        conn = psycopg2.connect(app.config['SQLALCHEMY_DATABASE_URI'])
+        cur = conn.cursor()
+        cur.execute('SELECT * FROM users WHERE username = %s', (username,))
+        user = cur.fetchone()
+        if user:
+            cur.close()
+            conn.close()
+            return render_template('register.html', error='Username already exists')
+        else:
+            cur.execute('INSERT INTO users (username, password, email) VALUES (%s, %s, %s)', (username, password,email))
+            conn.commit()
+            cur.close()
+            conn.close()
+            session['username'] = username
+            return redirect(url_for('index'))
+    else:
+        return render_template('register.html')
+
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('index'))
 
 
 if __name__ == "__main__":
