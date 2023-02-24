@@ -6,6 +6,13 @@
 
 {% block body %}
 <h1>My transactions</h1>
+{% if has_prev_page %}
+<a href="{{ url_for('transaction', page=prev_page) }}">Previous</a>
+{% endif %}
+<a>[{{prev_page+1}}]</a>
+{% if has_next_page %}
+<a href="{{ url_for('transaction', page=next_page) }}">Next</a>
+{% endif %}
 <table>
     <thead>
         <tr>
