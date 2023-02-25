@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Crypto Price Checker</title>
+{% endblock %}
+
+{% block body %}
+
+<h3>Crypto Price</h3>
+<p>Enter the symbol of a cryptocurrency to check its current price:</p>
+<form action="/price" method="post">
+    <input type="text" name="coin">
+    <input type="submit" value="Check!">
+</form>
+{% if coin %}
+<p>The current price of {{ coin }} is {{ price }} USD.</p>
+{% else %}
+    <p>Please enter a cryptocurrency symbol to check its price.</p>
+{% endif %}
+{% if error %}
+    <p>Error: {{ error }}</p>
+{% endif %}
+
+{% endblock %}

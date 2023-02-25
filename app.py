@@ -634,15 +634,45 @@ def wrapped_balance():
 
 
 '''
+crypto unit price query
 '''
-@app.route('/crypto-price/<coin>')
-def get_crypto_price(coin):
-    url = f'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids={coin}'
-    response = requests.get(url)
-    data = response.json()
-    price = data[0]['current_price']
-    return jsonify({'price': price})
+@app.route('/price', methods=['GET', 'POST'])
+def price():
+    coin = None
+    price = None
+    if request.method == 'POST':
+        coin = request.form['coin']
+        price = crypto_price(coin)
+        print(price)
+    else:
+        price = None
+    return render_template('price.html', coin=coin.upper() if coin else None, price=price)
 
+def crypto_price(coin):
+    param = coin
+    api_endpoint = "https://cryptoprices.cc/"
+
+    try:
+        response = requests.get(api_endpoint+param.upper(), timeout=5)
+        response.raise_for_status()
+        price = response.text.strip()
+        return float(price)
+
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP error: {e}")
+        return -1.0
+
+    except requests.exceptions.ConnectionError as e:
+        print(f"Connection error: {e}")
+        return -1.0
+
+    except requests.exceptions.Timeout as e:
+        print(f"Request timed out: {e}")
+        return -1.0
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return -1.0
 
 
 '''
