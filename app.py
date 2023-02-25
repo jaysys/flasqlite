@@ -335,7 +335,7 @@ def transaction():
         end_index = start_index + ROWS_PER_PAGE
 
         # Query the database for the rows to display on this page
-        query = f"SELECT div, asset, to_char(qty,'9,999,999,999.999') as qty, to_char(total_krw,'9,999,999,999.9') as total_krw, asset_note, timestamp FROM my_asset order by timestamp desc, div, asset_note LIMIT {ROWS_PER_PAGE} OFFSET {start_index}"
+        query = f"SELECT div, asset, to_char(qty,'9,999,999,999.999') as qty, to_char(total_krw,'9,999,999,999.9') as total_krw, asset_note, timestamp where total_krw > 1000 FROM my_asset order by timestamp desc, div, asset_note LIMIT {ROWS_PER_PAGE} OFFSET {start_index}"
         df = pd.read_sql(query, engine)
 
         # Check if there are any more rows to display
