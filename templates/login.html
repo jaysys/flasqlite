@@ -4,6 +4,7 @@
     <title>Login</title>
   </head>
   <body>
+  <div align="center">
     <h2>Please login</h2>
     {% if error %}
       <p style="color: red;">{{ error }}</p>
@@ -17,5 +18,6 @@
     </form>
     <br>
     <p>Don't have an account? <a href="{{ url_for('register') }}">Register now</a></p>
+  </div>
   </body>
 </html>
