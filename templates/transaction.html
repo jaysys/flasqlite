@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block body %}
-<h2>:) Transactions</h2>
+<h2>:) full transactions paginated</h2>
 {% if has_prev_page %}
 <a href="{{ url_for('transaction', page=prev_page) }}">Previous</a>
 {% endif %}

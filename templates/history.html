@@ -2,12 +2,13 @@
 
 {% block head %}
 <title>flask playground</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dfstyle.css') }}">
 {% endblock %}
 
 {% block body %}
 <br>
 <center>
-<h3>:) dataframe to_html()</h3>
+<h3>:) summarized using dataframe to_html()</h3>
 
 <div>
   {{ tab | safe }}
