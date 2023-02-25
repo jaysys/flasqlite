@@ -5,25 +5,25 @@ import psycopg2
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from bokeh.embed import components
 from bokeh.plotting import figure, show
 from bokeh.resources import INLINE
 from bokeh.models import DatetimeTickFormatter, NumeralTickFormatter
 
 try:
-    db_conn = os.environ.get('DBCONN')
+    db_conn_string = os.environ.get('DBCONN')
     openai.api_key = os.environ.get('OPENAI')
     my_address = os.environ.get('ADDRS')
-    #print(db_conn,openai.api_key)
+    #print(db_conn_string,openai.api_key)
 except:
     pass
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = db_conn #'mysecretkey' - 일단같은걸로해서...
+app.config['SECRET_KEY'] = db_conn_string #'mysecretkey' - 일단같은걸로해서...
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = db_conn  #'postgresql://id:pwd@ip:port/dbname'
+app.config['SQLALCHEMY_DATABASE_URI'] = db_conn_string  #'postgresql://id:pwd@ip:port/dbname'
     
 '''
 postgresql DB connect & crud web page excercise 
@@ -156,18 +156,27 @@ dataframe & bokeh combination excercise
 '''
 @app.route('/dfbokeh')
 def dfbokeh():   
-    db = create_engine(db_conn)
-    conn = db.connect()
-    print("[db_connection]",db,conn)
 
-    if True:
-        # df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp ORDER BY timestamp desc", conn)
-        df_div = pd.read_sql("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp ORDER BY timestamp desc", conn, index_col=None)
-        df_div_stock = pd.read_sql("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset WHERE div = 'STOCK' GROUP BY timestamp, div ORDER BY timestamp desc", conn, index_col=None)
-        df_div_crypto = pd.read_sql("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset WHERE div = 'CRYPTO' GROUP BY timestamp, div ORDER BY timestamp desc", conn, index_col=None)
-        df_div_cash = pd.read_sql("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset WHERE div = 'CASH' GROUP BY timestamp, div ORDER BY timestamp desc", conn, index_col=None)            
-        #print(df_div)#.to_markdown(floatfmt=',.2f'))
+    engine = create_engine(db_conn_string)
+    conn = engine.connect()
 
+    query = text("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp ORDER BY timestamp desc")
+    result = conn.execute(query)
+    df_div = pd.DataFrame(result.fetchall())
+
+    query = text("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset WHERE div = 'STOCK' GROUP BY timestamp, div ORDER BY timestamp desc")
+    result = conn.execute(query)
+    df_div_stock = pd.DataFrame(result.fetchall())
+
+    query = text("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset WHERE div = 'CRYPTO' GROUP BY timestamp, div ORDER BY timestamp desc")
+    result = conn.execute(query)
+    df_div_crypto = pd.DataFrame(result.fetchall())
+
+    query = text("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset WHERE div = 'CASH' GROUP BY timestamp, div ORDER BY timestamp desc")
+    result = conn.execute(query)
+    df_div_cash = pd.DataFrame(result.fetchall())
+
+    conn.close()
 
     ### ---
     rows = df_div.shape[0]
@@ -293,15 +302,14 @@ def snapshot():
     if 'username' in session:
         username = session['username']
 
-        db = create_engine(db_conn)
-        conn = db.connect()
-        print("[db_connection]",db,conn)
+        engine = create_engine(db_conn_string)
+        conn = engine.connect()
+        query = text("select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, asset_note, round(sum(total_krw)) as total_krw from my_asset group by asset_note, timestamp order by timestamp desc, total_krw desc limit 14")
+        result = conn.execute(query)
+        df_div = pd.DataFrame(result.fetchall())
+        df_div.columns = result.keys()
+        conn.close()
 
-        if True:
-            #df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp, div ORDER BY timestamp desc", conn)
-            #df_div = pd.read_sql("select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, asset_note, round(sum(total_krw)) as total_krw from my_asset group by div, asset_note, timestamp order by timestamp desc limit 12", conn)
-            df_div = pd.read_sql("select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, asset_note, round(sum(total_krw)) as total_krw from my_asset group by asset_note, timestamp order by timestamp desc, total_krw desc limit 14", conn)
-        
         df_div['total_krw'] = df_div['total_krw'].apply(format_with_commas)
         html_table = df_div.to_html(classes='dfmystyle') #####!
 
@@ -320,7 +328,7 @@ def snapshot():
 paginated data browsing
 '''
 # Define the database connection
-engine = create_engine(db_conn)
+engine = create_engine(db_conn_string)
 # Set the number of rows to show per page
 ROWS_PER_PAGE = 25
 
@@ -337,8 +345,26 @@ def transaction():
         end_index = start_index + ROWS_PER_PAGE
 
         # Query the database for the rows to display on this page
-        query = f"SELECT div, asset, to_char(qty,'9,999,999,999.999') as qty, to_char(total_krw,'9,999,999,999.9') as total_krw, asset_note, timestamp  FROM my_asset WHERE total_krw > 1000 ORDER BY timestamp DESC, asset_note, total_krw DESC LIMIT {ROWS_PER_PAGE} OFFSET {start_index}"
-        df = pd.read_sql(query, engine)
+        # query = text("SELECT div, asset, to_char(qty,'9,999,999,999.999') as qty, to_char(total_krw,'9,999,999,999.9') as total_krw, asset_note, timestamp  FROM my_asset WHERE total_krw > 1000 ORDER BY timestamp DESC, asset_note, total_krw DESC LIMIT :rows_per_page OFFSET :start_index")
+        # df = pd.read_sql(query, engine, params={"rows_per_page": ROWS_PER_PAGE, "start_index": start_index})
+        # with engine.connect() as conn:
+        #     df = pd.read_sql(query, conn)
+
+        # Query the database for the rows to display on this page
+        # query = text("SELECT div, asset, to_char(qty,'9,999,999,999.999') as qty, to_char(total_krw,'9,999,999,999.9') as total_krw, asset_note, timestamp  FROM my_asset WHERE total_krw > 1000 ORDER BY timestamp DESC, asset_note, total_krw DESC LIMIT :rows_per_page OFFSET :start_index")
+        # df = pd.read_sql(query, engine, params={"rows_per_page": ROWS_PER_PAGE, "start_index": start_index})
+
+        engine = create_engine(db_conn_string)
+        conn = engine.connect()
+        query = text("SELECT div, asset, to_char(qty,'9,999,999,999.999') as qty, to_char(total_krw,'9,999,999,999.9') as total_krw, asset_note, timestamp  FROM my_asset WHERE total_krw > 1000 ORDER BY timestamp DESC, asset_note, total_krw DESC LIMIT :rows_per_page OFFSET :start_index")
+        result = conn.execute(query, {"rows_per_page": ROWS_PER_PAGE, "start_index": start_index})
+        df = pd.DataFrame(result.fetchall())
+        df.columns = result.keys()
+        conn.close()
+
+        # Query the database for the rows to display on this page
+        # query = f"SELECT div, asset, to_char(qty,'9,999,999,999.999') as qty, to_char(total_krw,'9,999,999,999.9') as total_krw, asset_note, timestamp  FROM my_asset WHERE total_krw > 1000 ORDER BY timestamp DESC, asset_note, total_krw DESC LIMIT {ROWS_PER_PAGE} OFFSET {start_index}"
+        # df = pd.read_sql(query, engine)
 
         # Check if there are any more rows to display
         has_next_page = len(df) == ROWS_PER_PAGE
@@ -480,33 +506,32 @@ def register():
 '''
 flare
 '''
-
-
 @app.route("/flare")
 def flarebalance():
-    print(my_address)
-    return redirect(url_for('index'))
-    # if 'username' in session:
-    #     from web3 import Web3
-    #     address = Web3.toChecksumAddress(my_address)
-    #     print(address)
+    # print(my_address)
+    # return redirect(url_for('index'))
+    if 'username' in session:
 
-    #     # Connect to the Flare and Songbird networks using Web3
-    #     flare = Web3(Web3.HTTPProvider('https://rpc.flare.network'))
-    #     songbird = Web3(Web3.HTTPProvider('https://rpc.sgb.network'))
+        from web3 import Web3
+        address = Web3.toChecksumAddress(my_address)
+        print(address)
 
-    #     # Get the balance of Flare and Songbird coins for the specified address
-    #     flare_balance = flare.eth.getBalance(address)
-    #     songbird_balance = songbird.eth.getBalance(address)
+        # Connect to the Flare and Songbird networks using Web3
+        flare = Web3(Web3.HTTPProvider('https://rpc.flare.network'))
+        songbird = Web3(Web3.HTTPProvider('https://rpc.sgb.network'))
 
-    #     # Convert the balance values to decimal units
-    #     flare_balance = Web3.fromWei(flare_balance, 'ether')
-    #     songbird_balance = Web3.fromWei(songbird_balance, 'ether')
+        # Get the balance of Flare and Songbird coins for the specified address
+        flare_balance = flare.eth.getBalance(address)
+        songbird_balance = songbird.eth.getBalance(address)
 
-    #     # Render the template with the balance values
-    #     return render_template('flare.html', address=address, flare_balance=flare_balance, songbird_balance=songbird_balance)
-    # else:
-    #     return redirect(url_for('login'))  
+        # Convert the balance values to decimal units
+        flare_balance = Web3.fromWei(flare_balance, 'ether')
+        songbird_balance = Web3.fromWei(songbird_balance, 'ether')
+
+        # Render the template with the balance values
+        return render_template('flare.html', address=address, flare_balance=flare_balance, songbird_balance=songbird_balance)
+    else:
+        return redirect(url_for('login'))  
 
 
 
