@@ -17,7 +17,6 @@ try:
     db_conn_string = os.environ.get('DBCONN')
     openai.api_key = os.environ.get('OPENAI')
     my_address = os.environ.get('ADDRS')
-    #print(db_conn_string,openai.api_key)
 except:
     pass
 
