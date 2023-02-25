@@ -3,7 +3,7 @@ import openai
 import pandas as pd
 import psycopg2
 import json
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from sqlalchemy import create_engine, text
@@ -12,6 +12,7 @@ from bokeh.plotting import figure, show
 from bokeh.resources import INLINE
 from bokeh.models import DatetimeTickFormatter, NumeralTickFormatter
 from web3 import Web3
+import requests
 
 try:
     db_conn_string = os.environ.get('DBCONN')
@@ -630,6 +631,17 @@ def wrapped_balance():
     print(f'WSGB balance is {wsgb_bal}')
 
     return(wflr_bal, wsgb_bal)
+
+
+'''
+'''
+@app.route('/crypto-price/<coin>')
+def get_crypto_price(coin):
+    url = f'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids={coin}'
+    response = requests.get(url)
+    data = response.json()
+    price = data[0]['current_price']
+    return jsonify({'price': price})
 
 
 

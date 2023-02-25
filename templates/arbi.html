@@ -2,6 +2,7 @@
 
 {% block head %}
 <title>Arbitrum</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dfstyle.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -9,9 +10,32 @@
 <center>
     <h3>:) ~ Arbitrum</h3>
       <pre>Address: {{ address }}</pre>
-      <pre>ETH Balance: {{ eth_balance }} aETH</pre>
-      <pre>GMX Balance: {{ gmx_balance }} GMX</pre>
-      <pre>sbfGMX Balance: {{ sbfgmx_balance }} sbfGMX</pre>
+      <table>
+        <tr>
+          <th>Crypto</th>
+          <th>Balance</th>
+          <th>Unit</th>          
+          <th>Total</th>
+        </tr>
+        <tr>
+          <td>Arbitrum ETH</td>
+          <td>{{ eth_balance }}</td>
+          <td>{{ eth_unit_price}}</td>
+          <td>{{ eth_total }}</td>
+        </tr>
+        <tr>
+          <td>GMX.io(GMX)</td>
+          <td>{{ gmx_balance }}</td>
+          <td>{{ gmx_unit_balance }}</td>
+          <td>{{ gmx_total }}</td>
+        </tr>
+        <tr>
+          <td>Stabked GMX(sbfGMX)</td>
+          <td>{{ sbfgmx_balance }}</td>
+          <td>{{ sbfgmx_unit_balance}}</td>
+          <td>{{ sbfgmx_total }}</td>
+        </tr>
+      </table>
 </center>
 {% endblock %}
 

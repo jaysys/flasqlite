@@ -2,6 +2,7 @@
 
 {% block head %}
 <title>Flare and Songbird Balance</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dfstyle.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -9,10 +10,28 @@
 <center>
     <h3>:) ~ flare & songbird</h3>
       <pre>Address: {{ address }}</pre>
-      <pre>Flare Balance: {{ flare_balance }} FLR</pre>
-      <pre>Wraped Flare: {{ flare_staked }} WFLR</pre>
-      <pre>Songbird Balance: {{ songbird_balance }} SGB</pre>
-      <pre>Wraped songbird: {{ sgb_staked }} WSGB</pre>
+      <table>
+        <tr>
+          <th>Token</th>
+          <th>Balance</th>
+        </tr>
+        <tr>
+          <td>Flare(FLR)</td>
+          <td>{{ flare_balance }}</td>
+        </tr>
+        <tr>
+          <td>Wrapped Flare(WFLR)</td>
+          <td>{{ flare_staked }}</td>
+        </tr>
+        <tr>
+          <td>Songbird(SGB)</td>
+          <td>{{songbird_balance}}</td>
+        </tr>
+        <tr>
+          <td>Wrapped Songbird(WSGB)</td>
+          <td>{{sgb_staked}}</td>
+        </tr>
+      </table>
 </center>
 {% endblock %}
 
