@@ -514,7 +514,7 @@ def arbitrumbalance():
 
     if 'username' in session:
         username = session['username']
-        print(my_address)
+        print(my_address[:6]+".......")
 
         # Connect to the Arbitrum network using an RPC endpoint
         arbitrum = Web3(Web3.HTTPProvider('https://arb1.arbitrum.io/rpc'))
@@ -529,7 +529,7 @@ def arbitrumbalance():
         balance = Web3.fromWei(balance, 'ether')
 
         # Render the template with the balance values
-        return render_template('arbi.html', address=address, balance=balance, username=username)
+        return render_template('arbi.html', address = address[:6]+"......", balance=balance, username=username)
     else:
         return redirect(url_for('login'))
 
@@ -544,7 +544,7 @@ def flarebalance():
 
     if 'username' in session:
         username = session['username']
-        print(my_address)
+        print(my_address[:6]+".......")
 
         # Connect to the Flare and Songbird networks using Web3
         flare = Web3(Web3.HTTPProvider('https://flare-api.flare.network/ext/C/rpc'))
@@ -560,7 +560,7 @@ def flarebalance():
         songbird_balance = Web3.fromWei(songbird_balance, 'ether')
 
         # Render the template with the balance values
-        return render_template('flare.html', address=address, 
+        return render_template('flare.html', address=address[:6]+"......", 
                                flare_balance=flare_balance, 
                                songbird_balance=songbird_balance, username=username)
     else:
