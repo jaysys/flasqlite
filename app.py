@@ -480,30 +480,33 @@ def register():
 '''
 flare
 '''
-from web3 import Web3
+
 
 @app.route("/flare")
 def flarebalance():
-    if 'username' in session:
-        address = Web3.toChecksumAddress(my_address)
-        print(address)
+    print(my_address)
+    return redirect(url_for('index'))
+    # if 'username' in session:
+    #     from web3 import Web3
+    #     address = Web3.toChecksumAddress(my_address)
+    #     print(address)
 
-        # Connect to the Flare and Songbird networks using Web3
-        flare = Web3(Web3.HTTPProvider('https://rpc.flare.network'))
-        songbird = Web3(Web3.HTTPProvider('https://rpc.sgb.network'))
+    #     # Connect to the Flare and Songbird networks using Web3
+    #     flare = Web3(Web3.HTTPProvider('https://rpc.flare.network'))
+    #     songbird = Web3(Web3.HTTPProvider('https://rpc.sgb.network'))
 
-        # Get the balance of Flare and Songbird coins for the specified address
-        flare_balance = flare.eth.getBalance(address)
-        songbird_balance = songbird.eth.getBalance(address)
+    #     # Get the balance of Flare and Songbird coins for the specified address
+    #     flare_balance = flare.eth.getBalance(address)
+    #     songbird_balance = songbird.eth.getBalance(address)
 
-        # Convert the balance values to decimal units
-        flare_balance = Web3.fromWei(flare_balance, 'ether')
-        songbird_balance = Web3.fromWei(songbird_balance, 'ether')
+    #     # Convert the balance values to decimal units
+    #     flare_balance = Web3.fromWei(flare_balance, 'ether')
+    #     songbird_balance = Web3.fromWei(songbird_balance, 'ether')
 
-        # Render the template with the balance values
-        return render_template('flare.html', address=address, flare_balance=flare_balance, songbird_balance=songbird_balance)
-    else:
-        return redirect(url_for('login'))  
+    #     # Render the template with the balance values
+    #     return render_template('flare.html', address=address, flare_balance=flare_balance, songbird_balance=songbird_balance)
+    # else:
+    #     return redirect(url_for('login'))  
 
 
 
