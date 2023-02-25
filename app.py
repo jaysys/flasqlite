@@ -505,12 +505,43 @@ def register():
 
 
 '''
+arbitrum
+'''
+@app.route("/arbi")
+def arbitrumbalance():
+    print(my_address)
+    return redirect(url_for('index'))
+
+    if 'username' in session:
+        username = session['username']
+        print(my_address)
+
+        # Connect to the Arbitrum network using an RPC endpoint
+        arbitrum = Web3(Web3.HTTPProvider('https://arb1.arbitrum.io/rpc'))
+
+        # Convert the Ethereum address to checksum format
+        address = Web3.toChecksumAddress(my_address)
+
+        # Get the balance of the address on the Arbitrum network
+        balance = arbitrum.eth.get_balance(address)
+
+        # Convert the balance values to decimal units
+        balance = Web3.fromWei(balance, 'ether')
+
+        # Render the template with the balance values
+        return render_template('arbi.html', address=address, balance=balance, username=username)
+    else:
+        return redirect(url_for('login'))
+
+
+'''
 flare
 '''
 @app.route("/flare")
 def flarebalance():
-    # print(my_address)
-    # return redirect(url_for('index'))
+    print(my_address)
+    return redirect(url_for('index'))
+
     if 'username' in session:
         username = session['username']
         print(my_address)
@@ -534,33 +565,6 @@ def flarebalance():
                                songbird_balance=songbird_balance, username=username)
     else:
         return redirect(url_for('login'))  
-
-
-'''
-flare
-'''
-@app.route("/arbi")
-def arbitrumbalance():
-    if 'username' in session:
-        username = session['username']
-        print(my_address)
-
-        # Connect to the Arbitrum network using an RPC endpoint
-        arbitrum = Web3(Web3.HTTPProvider('https://arb1.arbitrum.io/rpc'))
-
-        # Convert the Ethereum address to checksum format
-        address = Web3.toChecksumAddress(my_address)
-
-        # Get the balance of the address on the Arbitrum network
-        balance = arbitrum.eth.get_balance(address)
-
-        # Convert the balance values to decimal units
-        balance = Web3.fromWei(balance, 'ether')
-
-        # Render the template with the balance values
-        return render_template('arbi.html', address=address, balance=balance, username=username)
-    else:
-        return redirect(url_for('login'))
 
 
 
