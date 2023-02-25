@@ -16,23 +16,25 @@
 <table>
     <thead>
         <tr>
+            <th>timestamp</th>
             <th>div</th>
             <th>asset</th>
             <th>qty</th>
             <th>total_krw</th>
             <th>asset_note</th>
-            <th>timestamp</th>
+
         </tr>
     </thead>
     <tbody>
         {% for transaction in transactions %}
         <tr>
+            <td>{{ transaction.timestamp }}</td>
             <td>{{ transaction.div }}</td>
             <td>{{ transaction.asset }}</td>
             <td align="right">{{ transaction.qty }}</td>
             <td align="right">{{ transaction.total_krw }}</td>
             <td>{{ transaction.asset_note }}</td>
-            <td>{{ transaction.timestamp }}</td>
+
         </tr>
         {% endfor %}
     </tbody>
