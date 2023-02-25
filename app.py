@@ -510,7 +510,7 @@ arbitrum
 @app.route("/arbi")
 def arbitrumbalance():
     print(my_address)
-    return redirect(url_for('index'))
+    #return redirect(url_for('index'))
 
     if 'username' in session:
         username = session['username']
@@ -540,7 +540,7 @@ flare
 @app.route("/flare")
 def flarebalance():
     print(my_address)
-    return redirect(url_for('index'))
+    #return redirect(url_for('index'))
 
     if 'username' in session:
         username = session['username']
