@@ -2,6 +2,7 @@
 
 {% block head %}
 <title>My transactions</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dfstyle.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -18,21 +19,21 @@
         <tr>
             <th>timestamp</th>
             <th>div</th>
+            <th>asset_note</th>
             <th>asset</th>
             <th>qty</th>
             <th>total_krw</th>
-            <th>asset_note</th>
         </tr>
     </thead>
     <tbody>
         {% for transaction in transactions %}
         <tr>
             <td>{{ transaction.timestamp }}</td>
-            <td>{{ transaction.div }}</td>
-            <td>{{ transaction.asset }}</td>
-            <td align="right">{{ transaction.qty }}</td>
-            <td align="right">{{ transaction.total_krw }}</td>
+            <td align="left">{{ transaction.div }}</td>
             <td>{{ transaction.asset_note }}</td>
+            <td>{{ transaction.asset }}</td>
+            <td>{{ transaction.qty }}</td>
+            <td>{{ transaction.total_krw }}</td>
         </tr>
         {% endfor %}
     </tbody>

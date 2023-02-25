@@ -1,0 +1,31 @@
+/*
+pandas dataframe to_html() 
+*/
+
+body, html {
+    margin: 1;
+    /* font-family: sans-serif; */
+    /* background-color: lightblue; */
+}
+
+table, td, th {
+    font-size: 11pt; 
+    font-family: Consolas, monospace;
+    border-collapse: collapse; 
+    border: 1px solid silver;
+    text-align: center;
+}
+
+td {
+    text-align: right;
+    padding: 5px;
+}
+
+tr:nth-child(even) {
+    background: #E0E0E0;
+}
+
+tr:hover {
+    background: silver;
+    cursor: pointer;
+}
