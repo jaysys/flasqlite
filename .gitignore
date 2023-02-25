@@ -5,4 +5,8 @@ tmp/
 test.db
 env.html
 *.old
+*.memo
+*.backup
+
+
 
