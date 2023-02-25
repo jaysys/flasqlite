@@ -2,6 +2,7 @@ import os
 import openai
 import pandas as pd
 import psycopg2
+import json
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -518,24 +519,54 @@ def arbitrumbalance():
 
         # Connect to the Arbitrum network using an RPC endpoint
         arbitrum = Web3(Web3.HTTPProvider('https://arb1.arbitrum.io/rpc'))
-
         # Convert the Ethereum address to checksum format
         address = Web3.toChecksumAddress(my_address)
-
         # Get the balance of the address on the Arbitrum network
         balance = arbitrum.eth.get_balance(address)
-
         # Convert the balance values to decimal units
-        balance = Web3.fromWei(balance, 'ether')
-
+        eth_balance = Web3.fromWei(balance, 'ether')
         # Render the template with the balance values
-        return render_template('arbi.html', address = address[:6]+"......", balance=balance, username=username)
+
+        gmx_bal, sbfgmx_bal = gmx_balance()
+        return render_template('arbi.html', address = address[:6]+"......", 
+                               eth_balance=eth_balance, 
+                               gmx_balance=gmx_bal,
+                               sbfgmx_balance=sbfgmx_bal,
+                               username=username)
     else:
         return redirect(url_for('login'))
 
+def gmx_balance():
+    '''
+    GMX
+    '''
+    w3 = Web3(Web3.HTTPProvider('https://arb1.arbitrum.io/rpc'))
+    gmx_contract_address = '0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a'
+    gmx_contract_address = Web3.toChecksumAddress(gmx_contract_address)
+    with open('static/abi/abi_gmx.json', 'r') as f:
+        abi = json.load(f)
+    gmx_contract = w3.eth.contract(address=gmx_contract_address, abi=abi)
+    gmx_bal = gmx_contract.functions.balanceOf(my_address).call() / 1000000000000000000
+    print(f'GMX balance is {gmx_bal}')
+
+    '''
+    sbfGMX
+    '''
+    w3 = Web3(Web3.HTTPProvider('https://arb1.arbitrum.io/rpc'))
+    sbfgmx_contract_address = '0xd2d1162512f927a7e282ef43a362659e4f2a728f'
+    sbfgmx_contract_address = Web3.toChecksumAddress(sbfgmx_contract_address)
+    with open('static/abi/abi_gmx.json', 'r') as f:
+        abi = json.load(f)
+    sbfgmx_contract = w3.eth.contract(address=sbfgmx_contract_address, abi=abi)
+    sbfgmx_bal = sbfgmx_contract.functions.balanceOf(my_address).call() / 1000000000000000000
+    print(f'GMX balance is {sbfgmx_bal}')
+
+    return(gmx_bal, sbfgmx_bal)
+
+
 
 '''
-flare
+flare and songbird
 '''
 @app.route("/flare")
 def flarebalance():
@@ -559,15 +590,53 @@ def flarebalance():
         flare_balance = Web3.fromWei(flare_balance, 'ether')
         songbird_balance = Web3.fromWei(songbird_balance, 'ether')
 
+        wflr, wsgb = wrapped_balance()
+        
         # Render the template with the balance values
         return render_template('flare.html', address=address[:6]+"......", 
                                flare_balance=flare_balance, 
-                               songbird_balance=songbird_balance, username=username)
+                               songbird_balance=songbird_balance, 
+                               flare_staked = wflr, 
+                               sgb_staked = wsgb, 
+                               username=username)
     else:
         return redirect(url_for('login'))  
 
 
+def wrapped_balance():
+    '''
+    WFLR
+    '''
+    # Replace with your own node endpoint URL
+    w3 = Web3(Web3.HTTPProvider('https://flare-api.flare.network/ext/C/rpc'))
+    # WrappedFLR contract address
+    wflr_contract_address = '0x1D80c49BbBCd1C0911346656B529DF9E5c2F783d'
+    # wflr_contract_address = Web3.toChecksumAddress(wflr_contract_address)
+    with open('static/abi/abi_wflr.json', 'r') as f:
+        abi = json.load(f)
+    _contract = w3.eth.contract(address=wflr_contract_address, abi=abi)
+    wflr_bal = _contract.functions.balanceOf(my_address).call() / 1000000000000000000
+    print(f'WFLR balance is {wflr_bal}')
 
+    '''
+    WSGB
+    '''
+    w3 = Web3(Web3.HTTPProvider('https://sgb.ftso.com.au/ext/bc/C/rpc'))
+    wsgb_contract_address = "0x02f0826ef6ad107cfc861152b32b52fd11bab9ed"
+    wsgb_contract_address = Web3.toChecksumAddress(wsgb_contract_address)
+    with open('static/abi/abi_wsgb.json', 'r') as f:
+        abi = json.load(f)
+    _contract = w3.eth.contract(address=wsgb_contract_address, abi=abi)
+    wsgb_bal = _contract.functions.balanceOf(my_address).call() / 1000000000000000000
+    print(f'WSGB balance is {wsgb_bal}')
+
+    return(wflr_bal, wsgb_bal)
+
+
+
+'''
+log out
+'''
 @app.route('/logout')
 def logout():
     session.pop('username', None)
