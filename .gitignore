@@ -4,4 +4,5 @@ tmp/
 .github/
 test.db
 env.html
+*.old
 
