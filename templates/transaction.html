@@ -6,45 +6,48 @@
 {% endblock %}
 
 {% block body %}
-<h2>:) full transactions paginated</h2>
-{% if has_prev_page %}
-<a href="{{ url_for('transaction', page=prev_page) }}">Previous</a>
-{% endif %}
-<a>[{{prev_page+1}}]</a>
-{% if has_next_page %}
-<a href="{{ url_for('transaction', page=next_page) }}">Next</a>
-{% endif %}
-<table>
-    <thead>
-        <tr>
-            <th>timestamp</th>
-            <th>div</th>
-            <th>asset_note</th>
-            <th>asset</th>
-            <th>qty</th>
-            <th>total_krw</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for transaction in transactions %}
-        <tr>
-            <td>{{ transaction.timestamp }}</td>
-            <td align="left">{{ transaction.div }}</td>
-            <td>{{ transaction.asset_note }}</td>
-            <td>{{ transaction.asset }}</td>
-            <td>{{ transaction.qty }}</td>
-            <td>{{ transaction.total_krw }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div align="center">
+    <h2>:) full transactions paginated</h2>
+    {% if has_prev_page %}
+    <a href="{{ url_for('transaction', page=prev_page) }}">Previous</a>
+    {% endif %}
+    <a>[{{prev_page+1}}]</a>
+    {% if has_next_page %}
+    <a href="{{ url_for('transaction', page=next_page) }}">Next</a>
+    {% endif %}
+    <table>
+        <thead>
+            <tr>
+                <th>timestamp</th>
+                <th>asset_note</th>
+                <th>asset</th>
+                <th>qty</th>
+                <th>total_krw</th>
+                <th>div</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+            <tr>
+                <td class="td-left-1px">{{ transaction.timestamp }}</td>
+                <td class="td-left-1px">{{ transaction.asset_note }}</td>
+                <td class="td-left-1px">{{ transaction.asset }}</td>
+                <td>{{ transaction.qty }}</td>
+                <td>{{ transaction.total_krw }}</td>
+                <td class="td-left-1px">{{ transaction.div }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-{% if has_prev_page %}
-<a href="{{ url_for('transaction', page=prev_page) }}">Previous</a>
-{% endif %}
-<a>[{{prev_page+1}}]</a>
-{% if has_next_page %}
-<a href="{{ url_for('transaction', page=next_page) }}">Next</a>
-{% endif %}
+    {% if has_prev_page %}
+    <a href="{{ url_for('transaction', page=prev_page) }}">Previous</a>
+    {% endif %}
+    <a>[{{prev_page+1}}]</a>
+    {% if has_next_page %}
+    <a href="{{ url_for('transaction', page=next_page) }}">Next</a>
+    {% endif %}
+</div>
+
 
 {% endblock %}

@@ -19,3 +19,4 @@ requests
 six == 1.16.0
 tornado == 6.2
 openai
+web3

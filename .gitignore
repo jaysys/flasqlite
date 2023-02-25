@@ -1,6 +1,7 @@
 __pycache__/
 env/
-test.db
-.github/
-env.html
 tmp/
+.github/
+test.db
+env.html
+

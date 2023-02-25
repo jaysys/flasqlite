@@ -14,11 +14,14 @@ table, td, th {
     border-collapse: collapse; 
     border: 1px solid silver;
     text-align: center;
+    padding-bottom: 1px;
+    padding-top: 1px;
 }
 
 td {
     text-align: right;
-    padding: 5px;
+    padding-bottom: 1px;
+    padding-top: 1px;
 }
 
 tr:nth-child(even) {
@@ -26,6 +29,46 @@ tr:nth-child(even) {
 }
 
 tr:hover {
+    background: silver;
+    cursor: pointer;
+}
+
+.td-left-1px {
+    text-align: left;
+    padding-bottom: 1px;
+    padding-top: 1px;
+  }
+
+.td-right-1px {
+    text-align: right;
+    padding-bottom: 1px;
+    padding-top: 1px;
+  }
+
+
+.dfmystyle {
+    font-size: 11pt; 
+    border-collapse: collapse; 
+    border: 1px solid silver;
+}
+
+.dfmystyle tr, th {
+    text-align: center;
+    padding-bottom: 1px;
+    padding-top: 1px;
+}
+
+.dfmystyle td {
+    text-align: right;
+    padding-bottom: 1px;
+    padding-top: 1px;
+}
+
+.dfmystyle tr:nth-child(even) {
+    background: #fcfedb;
+}
+
+.dfmystyle tr:hover {
     background: silver;
     cursor: pointer;
 }

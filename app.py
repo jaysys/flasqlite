@@ -14,6 +14,7 @@ from bokeh.models import DatetimeTickFormatter, NumeralTickFormatter
 try:
     db_conn = os.environ.get('DBCONN')
     openai.api_key = os.environ.get('OPENAI')
+    my_address = os.environ.get('ADDRS')
     #print(db_conn,openai.api_key)
 except:
     pass
@@ -287,8 +288,8 @@ pandas dataframe to_html() excercise
 def format_with_commas(number):
     return "{:,}".format(number)
 
-@app.route('/history')
-def history():
+@app.route('/snapshot')
+def snapshot():
     if 'username' in session:
         username = session['username']
 
@@ -298,7 +299,8 @@ def history():
 
         if True:
             #df_div = pd.read_sql("SELECT TO_CHAR(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, round(sum(total_krw)) as total FROM my_asset GROUP BY timestamp, div ORDER BY timestamp desc", conn)
-            df_div = pd.read_sql("select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, asset_note, round(sum(total_krw)) as total_krw from my_asset group by div, asset_note, timestamp order by timestamp desc limit 12", conn)
+            #df_div = pd.read_sql("select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, div, asset_note, round(sum(total_krw)) as total_krw from my_asset group by div, asset_note, timestamp order by timestamp desc limit 12", conn)
+            df_div = pd.read_sql("select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, asset_note, round(sum(total_krw)) as total_krw from my_asset group by asset_note, timestamp order by timestamp desc, total_krw desc limit 14", conn)
         
         df_div['total_krw'] = df_div['total_krw'].apply(format_with_commas)
         html_table = df_div.to_html(classes='dfmystyle') #####!
@@ -307,7 +309,7 @@ def history():
         # with open("templates/history_t.html", "w") as text_file:
         #     text_file.write(html_table)
 
-        html = render_template('history.html', tab = html_table, username=username)
+        html = render_template('snapshot.html', tab = html_table, username=username)
         return (html)
     else:
         return redirect(url_for('login'))
@@ -320,7 +322,7 @@ paginated data browsing
 # Define the database connection
 engine = create_engine(db_conn)
 # Set the number of rows to show per page
-ROWS_PER_PAGE = 15
+ROWS_PER_PAGE = 25
 
 @app.route('/transaction')
 def transaction():
@@ -335,7 +337,7 @@ def transaction():
         end_index = start_index + ROWS_PER_PAGE
 
         # Query the database for the rows to display on this page
-        query = f"SELECT div, asset, to_char(qty,'9,999,999,999.999') as qty, to_char(total_krw,'9,999,999,999.9') as total_krw, asset_note, timestamp  FROM my_asset WHERE total_krw > 1000 ORDER BY timestamp DESC, div, asset_note, total_krw DESC LIMIT {ROWS_PER_PAGE} OFFSET {start_index}"
+        query = f"SELECT div, asset, to_char(qty,'9,999,999,999.999') as qty, to_char(total_krw,'9,999,999,999.9') as total_krw, asset_note, timestamp  FROM my_asset WHERE total_krw > 1000 ORDER BY timestamp DESC, asset_note, total_krw DESC LIMIT {ROWS_PER_PAGE} OFFSET {start_index}"
         df = pd.read_sql(query, engine)
 
         # Check if there are any more rows to display
@@ -472,6 +474,37 @@ def register():
             return redirect(url_for('index'))
     else:
         return render_template('register.html')
+
+
+
+'''
+flare
+'''
+from web3 import Web3
+
+@app.route("/flare")
+def flarebalance():
+    if 'username' in session:
+        address = Web3.toChecksumAddress(my_address)
+        print(address)
+
+        # Connect to the Flare and Songbird networks using Web3
+        flare = Web3(Web3.HTTPProvider('https://rpc.flare.network'))
+        songbird = Web3(Web3.HTTPProvider('https://rpc.sgb.network'))
+
+        # Get the balance of Flare and Songbird coins for the specified address
+        flare_balance = flare.eth.getBalance(address)
+        songbird_balance = songbird.eth.getBalance(address)
+
+        # Convert the balance values to decimal units
+        flare_balance = Web3.fromWei(flare_balance, 'ether')
+        songbird_balance = Web3.fromWei(songbird_balance, 'ether')
+
+        # Render the template with the balance values
+        return render_template('flare.html', address=address, flare_balance=flare_balance, songbird_balance=songbird_balance)
+    else:
+        return redirect(url_for('login'))  
+
 
 
 @app.route('/logout')
