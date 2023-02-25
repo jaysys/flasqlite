@@ -10,6 +10,7 @@ from bokeh.embed import components
 from bokeh.plotting import figure, show
 from bokeh.resources import INLINE
 from bokeh.models import DatetimeTickFormatter, NumeralTickFormatter
+from web3 import Web3
 
 try:
     db_conn_string = os.environ.get('DBCONN')
@@ -511,15 +512,14 @@ def flarebalance():
     # print(my_address)
     # return redirect(url_for('index'))
     if 'username' in session:
-
-        from web3 import Web3
-        address = Web3.toChecksumAddress(my_address)
-        print(address)
+        username = session['username']
+        print(my_address)
 
         # Connect to the Flare and Songbird networks using Web3
-        flare = Web3(Web3.HTTPProvider('https://rpc.flare.network'))
-        songbird = Web3(Web3.HTTPProvider('https://rpc.sgb.network'))
+        flare = Web3(Web3.HTTPProvider('https://flare-api.flare.network/ext/C/rpc'))
+        songbird = Web3(Web3.HTTPProvider('https://sgb.ftso.com.au/ext/bc/C/rpc'))
 
+        address = Web3.toChecksumAddress(my_address)
         # Get the balance of Flare and Songbird coins for the specified address
         flare_balance = flare.eth.getBalance(address)
         songbird_balance = songbird.eth.getBalance(address)
@@ -529,9 +529,38 @@ def flarebalance():
         songbird_balance = Web3.fromWei(songbird_balance, 'ether')
 
         # Render the template with the balance values
-        return render_template('flare.html', address=address, flare_balance=flare_balance, songbird_balance=songbird_balance)
+        return render_template('flare.html', address=address, 
+                               flare_balance=flare_balance, 
+                               songbird_balance=songbird_balance, username=username)
     else:
         return redirect(url_for('login'))  
+
+
+'''
+flare
+'''
+@app.route("/arbi")
+def arbitrumbalance():
+    if 'username' in session:
+        username = session['username']
+        print(my_address)
+
+        # Connect to the Arbitrum network using an RPC endpoint
+        arbitrum = Web3(Web3.HTTPProvider('https://arb1.arbitrum.io/rpc'))
+
+        # Convert the Ethereum address to checksum format
+        address = Web3.toChecksumAddress(my_address)
+
+        # Get the balance of the address on the Arbitrum network
+        balance = arbitrum.eth.get_balance(address)
+
+        # Convert the balance values to decimal units
+        balance = Web3.fromWei(balance, 'ether')
+
+        # Render the template with the balance values
+        return render_template('arbi.html', address=address, balance=balance, username=username)
+    else:
+        return redirect(url_for('login'))
 
 
 
