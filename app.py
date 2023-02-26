@@ -3,6 +3,7 @@ import openai
 import pandas as pd
 import psycopg2
 import json
+import requests
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -12,7 +13,6 @@ from bokeh.plotting import figure, show
 from bokeh.resources import INLINE
 from bokeh.models import DatetimeTickFormatter, NumeralTickFormatter
 from web3 import Web3
-import requests
 
 try:
     db_conn_string = os.environ.get('DBCONN')
@@ -23,14 +23,107 @@ except:
 
 app = Flask(__name__)
 
+@app.route("/")
+def index():
+    if 'username' in session:
+        username = session['username']
+        return render_template('index.html', username=username)
+    else:
+        return redirect(url_for('login'))
+
+    # return render_template('index.html',username = 'aa')
+
+
+'''
+login function
+'''
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        conn = psycopg2.connect(app.config['SQLALCHEMY_DATABASE_URI'])
+        cur = conn.cursor()
+        cur.execute('SELECT * FROM users WHERE username = %s AND password = %s', (username, password))
+        user = cur.fetchone()
+        cur.close()
+        conn.close()
+        if user:
+            session['username'] = username
+            return redirect(url_for('index'))
+        else:
+            return render_template('login.html', error='Invalid username or password')
+    else:
+        return render_template('login.html')
+
+
+
+'''
+log out
+'''
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('index'))
+
+
+'''
+reister new user
+'''
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+        conn = psycopg2.connect(app.config['SQLALCHEMY_DATABASE_URI'])
+        cur = conn.cursor()
+        cur.execute('SELECT * FROM users WHERE username = %s', (username,))
+        user = cur.fetchone()
+        if user:
+            cur.close()
+            conn.close()
+            return render_template('register.html', error='Username already exists')
+        else:
+            cur.execute('INSERT INTO users (username, password, email) VALUES (%s, %s, %s)', (username, password,email))
+            conn.commit()
+            cur.close()
+            conn.close()
+            session['username'] = username
+            return redirect(url_for('index'))
+    else:
+        return render_template('register.html')
+
+
+
+'''
+sample html pages
+'''
+@app.route('/tailcss')
+def tailcss():
+    html = render_template(
+        'tailcss.html'
+    )
+    return (html)
+
+@app.route("/exam")
+def exam():
+    return render_template('exam70.html') #통신
+
+@app.route("/exam2")
+def exam2():
+    return render_template('exam02.html') #건축
+
+
+
+
+'''
+postgresql DB connect & crud web page excercise 
+'''
 app.config['SECRET_KEY'] = db_conn_string #'mysecretkey' - 일단같은걸로해서...
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SQLALCHEMY_DATABASE_URI'] = db_conn_string  #'postgresql://id:pwd@ip:port/dbname'
     
-'''
-postgresql DB connect & crud web page excercise 
-'''
-
 with app.app_context():
     db = SQLAlchemy(app)
 
@@ -43,17 +136,6 @@ class Todo(db.Model):
 
     def __repr__(self):
         return '<Task %r>' % self.id
-
-
-@app.route("/")
-def index():
-    if 'username' in session:
-        username = session['username']
-        return render_template('index.html', username=username)
-    else:
-        return redirect(url_for('login'))
-
-    # return render_template('index.html',username = 'aa')
 
 
 @app.route('/task', methods=['POST', 'GET'])
@@ -106,15 +188,6 @@ def update(id):
 
     else:
         return render_template('update.html', task=task)
-
-
-
-'''
-metamask crypto web3 connect & query balance
-'''
-@app.route('/meta')
-def meta():
-    return render_template('meta.html')
 
 
 
@@ -290,8 +363,6 @@ def dfbokeh():
     return (html)
 
 
-
-
 '''
 pandas dataframe to_html() excercise
 '''
@@ -306,8 +377,10 @@ def snapshot():
 
         engine = create_engine(db_conn_string)
         conn = engine.connect()
+
         query = text("select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, asset_note, round(sum(total_krw)) as total_krw from my_asset group by asset_note, timestamp order by timestamp desc, total_krw desc limit 14")
         result = conn.execute(query)
+        
         df_div = pd.DataFrame(result.fetchall())
         df_div.columns = result.keys()
         conn.close()
@@ -346,27 +419,15 @@ def transaction():
         start_index = (page - 1) * ROWS_PER_PAGE
         end_index = start_index + ROWS_PER_PAGE
 
-        # Query the database for the rows to display on this page
-        # query = text("SELECT div, asset, to_char(qty,'9,999,999,999.999') as qty, to_char(total_krw,'9,999,999,999.9') as total_krw, asset_note, timestamp  FROM my_asset WHERE total_krw > 1000 ORDER BY timestamp DESC, asset_note, total_krw DESC LIMIT :rows_per_page OFFSET :start_index")
-        # df = pd.read_sql(query, engine, params={"rows_per_page": ROWS_PER_PAGE, "start_index": start_index})
-        # with engine.connect() as conn:
-        #     df = pd.read_sql(query, conn)
-
-        # Query the database for the rows to display on this page
-        # query = text("SELECT div, asset, to_char(qty,'9,999,999,999.999') as qty, to_char(total_krw,'9,999,999,999.9') as total_krw, asset_note, timestamp  FROM my_asset WHERE total_krw > 1000 ORDER BY timestamp DESC, asset_note, total_krw DESC LIMIT :rows_per_page OFFSET :start_index")
-        # df = pd.read_sql(query, engine, params={"rows_per_page": ROWS_PER_PAGE, "start_index": start_index})
-
         engine = create_engine(db_conn_string)
         conn = engine.connect()
+
         query = text("SELECT div, asset, to_char(qty,'9,999,999,999.999') as qty, to_char(total_krw,'9,999,999,999.9') as total_krw, asset_note, timestamp  FROM my_asset WHERE total_krw > 1000 ORDER BY timestamp DESC, asset_note, total_krw DESC LIMIT :rows_per_page OFFSET :start_index")
+
         result = conn.execute(query, {"rows_per_page": ROWS_PER_PAGE, "start_index": start_index})
         df = pd.DataFrame(result.fetchall())
         df.columns = result.keys()
         conn.close()
-
-        # Query the database for the rows to display on this page
-        # query = f"SELECT div, asset, to_char(qty,'9,999,999,999.999') as qty, to_char(total_krw,'9,999,999,999.9') as total_krw, asset_note, timestamp  FROM my_asset WHERE total_krw > 1000 ORDER BY timestamp DESC, asset_note, total_krw DESC LIMIT {ROWS_PER_PAGE} OFFSET {start_index}"
-        # df = pd.read_sql(query, engine)
 
         # Check if there are any more rows to display
         has_next_page = len(df) == ROWS_PER_PAGE
@@ -381,9 +442,6 @@ def transaction():
     
     else:
         return redirect(url_for('login'))
-
-
-
 
 
 '''
@@ -436,106 +494,60 @@ def tyscript():
 
 
 '''
-sample html pages
+metamask connect & query balance
 '''
-@app.route('/tailcss')
-def tailcss():
-    html = render_template(
-        'tailcss.html'
-    )
-    return (html)
-
-
-@app.route("/exam")
-def exam():
-    return render_template('exam70.html') #통신
-
-@app.route("/exam2")
-def exam2():
-    return render_template('exam02.html') #건축
-
+@app.route('/meta')
+def meta():
+    return render_template('meta.html')
 
 
 '''
-login function
+crypto unit price query
 '''
-@app.route('/login', methods=['GET', 'POST'])
-def login():
+@app.route('/price', methods=['GET', 'POST'])
+def price():
+    coin = None
+    price = None
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        conn = psycopg2.connect(app.config['SQLALCHEMY_DATABASE_URI'])
-        cur = conn.cursor()
-        cur.execute('SELECT * FROM users WHERE username = %s AND password = %s', (username, password))
-        user = cur.fetchone()
-        cur.close()
-        conn.close()
-        if user:
-            session['username'] = username
-            return redirect(url_for('index'))
-        else:
-            return render_template('login.html', error='Invalid username or password')
+        coin = request.form['coin']
+        price = crypto_unit_price(coin)
+        print(price)
     else:
-        return render_template('login.html')
+        price = None
+    return render_template('price.html', coin=coin.upper() if coin else None, price=price)
 
+def crypto_unit_price(coin):
+    param = coin
+    api_endpoint = "https://cryptoprices.cc/"
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        email = request.form['email']
-        conn = psycopg2.connect(app.config['SQLALCHEMY_DATABASE_URI'])
-        cur = conn.cursor()
-        cur.execute('SELECT * FROM users WHERE username = %s', (username,))
-        user = cur.fetchone()
-        if user:
-            cur.close()
-            conn.close()
-            return render_template('register.html', error='Username already exists')
-        else:
-            cur.execute('INSERT INTO users (username, password, email) VALUES (%s, %s, %s)', (username, password,email))
-            conn.commit()
-            cur.close()
-            conn.close()
-            session['username'] = username
-            return redirect(url_for('index'))
-    else:
-        return render_template('register.html')
+    try:
+        response = requests.get(api_endpoint+param.upper(), timeout=5)
+        response.raise_for_status()
+        price = response.text.strip()
+        return float(price)
+
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP error: {e}")
+        return -1.0
+
+    except requests.exceptions.ConnectionError as e:
+        print(f"Connection error: {e}")
+        return -1.0
+
+    except requests.exceptions.Timeout as e:
+        print(f"Request timed out: {e}")
+        return -1.0
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return -1.0
+
 
 
 
 '''
-arbitrum
+gmx on arbitrum
 '''
-@app.route("/arbi")
-def arbitrumbalance():
-    print(my_address[:6]+".......")
-    #return redirect(url_for('index'))
-
-    if 'username' in session:
-        username = session['username']
-        print(my_address[:6]+".......")
-
-        # Connect to the Arbitrum network using an RPC endpoint
-        arbitrum = Web3(Web3.HTTPProvider('https://arb1.arbitrum.io/rpc'))
-        # Convert the Ethereum address to checksum format
-        address = Web3.toChecksumAddress(my_address)
-        # Get the balance of the address on the Arbitrum network
-        balance = arbitrum.eth.get_balance(address)
-        # Convert the balance values to decimal units
-        eth_balance = Web3.fromWei(balance, 'ether')
-        # Render the template with the balance values
-
-        gmx_bal, sbfgmx_bal = gmx_balance()
-        return render_template('arbi.html', address = address[:6]+"......", 
-                               eth_balance=eth_balance, 
-                               gmx_balance=gmx_bal,
-                               sbfgmx_balance=sbfgmx_bal,
-                               username=username)
-    else:
-        return redirect(url_for('login'))
-
 def gmx_balance():
     '''
     GMX
@@ -566,44 +578,9 @@ def gmx_balance():
 
 
 '''
-flare and songbird
+WFLR, WSGB on flare/songbird network
 '''
-@app.route("/flare")
-def flarebalance():
-    print(my_address[:6]+".......")
-    #return redirect(url_for('index'))
-
-    if 'username' in session:
-        username = session['username']
-        print(my_address[:6]+".......")
-
-        # Connect to the Flare and Songbird networks using Web3
-        flare = Web3(Web3.HTTPProvider('https://flare-api.flare.network/ext/C/rpc'))
-        songbird = Web3(Web3.HTTPProvider('https://sgb.ftso.com.au/ext/bc/C/rpc'))
-
-        address = Web3.toChecksumAddress(my_address)
-        # Get the balance of Flare and Songbird coins for the specified address
-        flare_balance = flare.eth.getBalance(address)
-        songbird_balance = songbird.eth.getBalance(address)
-
-        # Convert the balance values to decimal units
-        flare_balance = Web3.fromWei(flare_balance, 'ether')
-        songbird_balance = Web3.fromWei(songbird_balance, 'ether')
-
-        wflr, wsgb = wrapped_balance()
-        
-        # Render the template with the balance values
-        return render_template('flare.html', address=address[:6]+"......", 
-                               flare_balance=flare_balance, 
-                               songbird_balance=songbird_balance, 
-                               flare_staked = wflr, 
-                               sgb_staked = wsgb, 
-                               username=username)
-    else:
-        return redirect(url_for('login'))  
-
-
-def wrapped_balance():
+def wrapped_flare_balance():
     '''
     WFLR
     '''
@@ -634,55 +611,52 @@ def wrapped_balance():
 
 
 '''
-crypto unit price query
+Web3 connect 
 '''
-@app.route('/price', methods=['GET', 'POST'])
-def price():
-    coin = None
-    price = None
-    if request.method == 'POST':
-        coin = request.form['coin']
-        price = crypto_price(coin)
-        print(price)
+@app.route("/web3")
+def web3start():
+    print(my_address[:6]+".......(web3)")
+
+    if 'username' in session:
+        username = session['username']
+        print(my_address[:6]+".......")
+
+        #arbitrum
+        # Connect to the Arbitrum network using an RPC endpoint
+        arbitrum = Web3(Web3.HTTPProvider('https://arb1.arbitrum.io/rpc'))
+        # Convert the Ethereum address to checksum format
+        address = Web3.toChecksumAddress(my_address)
+        # Get the balance of the address on the Arbitrum network
+        balance = arbitrum.eth.get_balance(address)
+        # Convert the balance values to decimal units
+        eth_balance = Web3.fromWei(balance, 'ether')
+        gmx_bal, sbfgmx_bal = gmx_balance()
+
+        #flare&sgb
+        # Connect to the Flare and Songbird networks using Web3
+        flare = Web3(Web3.HTTPProvider('https://flare-api.flare.network/ext/C/rpc'))
+        songbird = Web3(Web3.HTTPProvider('https://sgb.ftso.com.au/ext/bc/C/rpc'))
+        address = Web3.toChecksumAddress(my_address)
+        # Get the balance of Flare and Songbird coins for the specified address
+        flare_balance = flare.eth.getBalance(address)
+        songbird_balance = songbird.eth.getBalance(address)
+        # Convert the balance values to decimal units
+        flare_balance = Web3.fromWei(flare_balance, 'ether')
+        songbird_balance = Web3.fromWei(songbird_balance, 'ether')
+        wflr, wsgb = wrapped_flare_balance()
+
+        return render_template('web3.html', address = address[:6]+"......", 
+                               eth_balance=eth_balance, 
+                               gmx_balance=gmx_bal,
+                               sbfgmx_balance=sbfgmx_bal,
+                               flare_balance=flare_balance, 
+                               songbird_balance=songbird_balance, 
+                               flare_staked = wflr, 
+                               sgb_staked = wsgb, 
+                               username=username)
     else:
-        price = None
-    return render_template('price.html', coin=coin.upper() if coin else None, price=price)
-
-def crypto_price(coin):
-    param = coin
-    api_endpoint = "https://cryptoprices.cc/"
-
-    try:
-        response = requests.get(api_endpoint+param.upper(), timeout=5)
-        response.raise_for_status()
-        price = response.text.strip()
-        return float(price)
-
-    except requests.exceptions.HTTPError as e:
-        print(f"HTTP error: {e}")
-        return -1.0
-
-    except requests.exceptions.ConnectionError as e:
-        print(f"Connection error: {e}")
-        return -1.0
-
-    except requests.exceptions.Timeout as e:
-        print(f"Request timed out: {e}")
-        return -1.0
-
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return -1.0
-
-
-'''
-log out
-'''
-@app.route('/logout')
-def logout():
-    session.pop('username', None)
-    return redirect(url_for('index'))
-
+        return redirect(url_for('login'))
 
 if __name__ == "__main__":
     app.run(debug=True)
+
