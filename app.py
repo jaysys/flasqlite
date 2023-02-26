@@ -571,7 +571,7 @@ def gmx_balance():
         abi = json.load(f)
     sbfgmx_contract = w3.eth.contract(address=sbfgmx_contract_address, abi=abi)
     sbfgmx_bal = sbfgmx_contract.functions.balanceOf(my_address).call() / 1000000000000000000
-    print(f'GMX balance is {sbfgmx_bal}')
+    print(f'sbfGMX balance is {sbfgmx_bal}')
 
     return(gmx_bal, sbfgmx_bal)
 
