@@ -631,6 +631,8 @@ def web3start():
         # Convert the balance values to decimal units
         eth_balance = Web3.fromWei(balance, 'ether')
         gmx_bal, sbfgmx_bal = gmx_balance()
+        gmx = crypto_unit_price("GMX")
+        eth = crypto_unit_price("ETH")
 
         #flare&sgb
         # Connect to the Flare and Songbird networks using Web3
@@ -643,17 +645,28 @@ def web3start():
         # Convert the balance values to decimal units
         flare_balance = Web3.fromWei(flare_balance, 'ether')
         songbird_balance = Web3.fromWei(songbird_balance, 'ether')
-        wflr, wsgb = wrapped_flare_balance()
+        wflr_bal, wsgb_bal = wrapped_flare_balance()
+        flr = crypto_unit_price("FLR")
+        sgb = crypto_unit_price("SGB")
 
-        return render_template('web3.html', address = address[:6]+"......", 
-                               eth_balance=eth_balance, 
-                               gmx_balance=gmx_bal,
-                               sbfgmx_balance=sbfgmx_bal,
-                               flare_balance=flare_balance, 
-                               songbird_balance=songbird_balance, 
-                               flare_staked = wflr, 
-                               sgb_staked = wsgb, 
-                               username=username)
+        return render_template('web3.html', address=address[:6]+"......", 
+                            eth="{:,.3f}".format(eth), gmx="{:,.3f}".format(gmx), 
+                            flr="{:,.3f}".format(flr), sgb="{:,.3f}".format(sgb),
+                            eth_balance="{:,.3f}".format(eth_balance), 
+                            eth_total="{:,.2f}".format(float(str(eth_balance))*float(str(eth))),
+                            gmx_balance="{:,.3f}".format(gmx_bal), 
+                            gmx_total="{:,.2f}".format(float(str(gmx_bal))*float(str(gmx))),
+                            sbfgmx_balance="{:,.3f}".format(sbfgmx_bal), 
+                            sbfgmx_total="{:,.2f}".format(float(str(gmx))*float(str(sbfgmx_bal))),
+                            flare_balance="{:,.3f}".format(flare_balance), 
+                            flr_total="{:,.2f}".format(float(str(flare_balance))*float(str(flr))),
+                            songbird_balance="{:,.3f}".format(songbird_balance), 
+                            sgb_total="{:,.2f}".format(float(str(sgb))*float(str(songbird_balance))),
+                            flare_staked="{:,.3f}".format(wflr_bal), 
+                            wflr_total="{:,.2f}".format(float(str(wflr_bal))*float(str(flr))),
+                            sgb_staked="{:,.3f}".format(wsgb_bal), 
+                            wsgb_total="{:,.2f}".format(float(str(wsgb_bal))*float(str(sgb))),
+                            username=username)
     else:
         return redirect(url_for('login'))
 

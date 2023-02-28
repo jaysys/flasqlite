@@ -8,55 +8,55 @@
 {% block body %}
 <br>
 <center>
-    <h3>:) Connecting Web3:: Aribitrum/Flare/Songbird </h3>
+    <h3>:) Connecting Web3:: Arbitrum / Flare&Songbird </h3>
       <pre>Address: {{ address }}</pre>
       <table>
         <tr>
-          <th>Token</th>
-          <th>Balance</th>
-          <th>Unit</th>
-          <th>Total</th>
+          <th>token</th>
+          <th>balance</th>
+          <th>unit price</th>
+          <th>total</th>
         </tr>
         <tr>
           <td>Flare(FLR)</td>
           <td>{{ flare_balance }}</td>
-          <td>{{ flr_unit_price}}</td>
+          <td>{{ flr }}</td>
           <td>{{ flr_total }}</td>
         </tr>
         <tr>
           <td>Wrapped Flare(WFLR)</td>
           <td>{{ flare_staked }}</td>
-          <td>{{ wflr_unit_price}}</td>
+          <td>{{ flr }}</td>
           <td>{{ wflr_total }}</td>
         </tr>
         <tr>
           <td>Songbird(SGB)</td>
           <td>{{songbird_balance}}</td>
-          <td>{{ sgb_unit_price}}</td>
+          <td>{{ sgb }}</td>
           <td>{{ sgb_total }}</td>
         </tr>
         <tr>
           <td>Wrapped Songbird(WSGB)</td>
           <td>{{sgb_staked}}</td>
-          <td>{{ wsgb_unit_price}}</td>
+          <td>{{ sgb }}</td>
           <td>{{ wsgb_total }}</td>
         </tr>
         <tr>
           <td>Arbitrum(aETH)</td>
           <td>{{ eth_balance }}</td>
-          <td>{{ eth_unit_price}}</td>
+          <td>{{ eth }}</td>
           <td>{{ eth_total }}</td>
         </tr>
         <tr>
           <td>GMX.io(GMX)</td>
           <td>{{ gmx_balance }}</td>
-          <td>{{ gmx_unit_price }}</td>
+          <td>{{ gmx  }}</td>
           <td>{{ gmx_total }}</td>
         </tr>
         <tr>
           <td>Stabked GMX(sbfGMX)</td>
           <td>{{ sbfgmx_balance }}</td>
-          <td>{{ sbfgmx_unit_price}}</td>
+          <td>{{ gmx }}</td>
           <td>{{ sbfgmx_total }}</td>
         </tr>
 
