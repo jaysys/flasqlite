@@ -8,8 +8,8 @@
 {% block body %}
 <br>
 <center>
-    <h3>:) playground connecting Web3:: arbitrum / flare&songbird </h3>
-      <pre>Address: {{ address }}</pre>
+    <h3>:) playground connecting web3:: arbitrum / flare&songbird </h3>
+      <h3>Address: {{ address }}</h3>
       <table>
         <tr>
           <th>network</th>
@@ -17,34 +17,6 @@
           <th>balance</th>
           <th>unit price</th>
           <th>total</th>
-        </tr>
-        <tr>
-          <td>flare</td>
-          <td>Flare(FLR)</td>
-          <td>{{ flare_balance }}</td>
-          <td>{{ flr }}</td>
-          <td>{{ flr_total }}</td>
-        </tr>
-        <tr>
-          <td>flare</td>
-          <td>Wrapped Flare(WFLR)</td>
-          <td>{{ flare_staked }}</td>
-          <td>{{ flr }}</td>
-          <td>{{ wflr_total }}</td>
-        </tr>
-        <tr>
-          <td>flare</td>
-          <td>Songbird(SGB)</td>
-          <td>{{songbird_balance}}</td>
-          <td>{{ sgb }}</td>
-          <td>{{ sgb_total }}</td>
-        </tr>
-        <tr>
-          <td>flare</td>
-          <td>Wrapped Songbird(WSGB)</td>
-          <td>{{sgb_staked}}</td>
-          <td>{{ sgb }}</td>
-          <td>{{ wsgb_total }}</td>
         </tr>
         <tr>
           <td>arbitrum</td>
@@ -55,7 +27,7 @@
         </tr>
         <tr>
           <td>arbitrum</td>
-          <td>GMX.io(GMX)</td>
+          <td>gmx.io(GMX)</td>
           <td>{{ gmx_balance }}</td>
           <td>{{ gmx  }}</td>
           <td>{{ gmx_total }}</td>
@@ -66,6 +38,34 @@
           <td>{{ sbfgmx_balance }}</td>
           <td>{{ gmx }}</td>
           <td>{{ sbfgmx_total }}</td>
+        </tr>
+        <tr>
+          <td>flare</td>
+          <td>flare(FLR)</td>
+          <td>{{ flare_balance }}</td>
+          <td>{{ flr }}</td>
+          <td>{{ flr_total }}</td>
+        </tr>
+        <tr>
+          <td>flare</td>
+          <td>wrapped flare(WFLR)</td>
+          <td>{{ flare_staked }}</td>
+          <td>{{ flr }}</td>
+          <td>{{ wflr_total }}</td>
+        </tr>
+        <tr>
+          <td>flare</td>
+          <td>songbird(SGB)</td>
+          <td>{{songbird_balance}}</td>
+          <td>{{ sgb }}</td>
+          <td>{{ sgb_total }}</td>
+        </tr>
+        <tr>
+          <td>flare</td>
+          <td>wrapped songbird(WSGB)</td>
+          <td>{{sgb_staked}}</td>
+          <td>{{ sgb }}</td>
+          <td>{{ wsgb_total }}</td>
         </tr>
 
       </table>
