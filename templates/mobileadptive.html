@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <!-- Import a responsive CSS framework such as Bootstrap or Foundation here -->
+    
+    <link rel="stylesheet" href="/static/css/main.css">
+    
+    <style>
+        /* Center the navigation links horizontally */
+        nav {
+            display: flex;
+            justify-content: center;
+        }
+        
+        /* Use relative units for font sizes */
+        h1, p {
+            font-size: 2em;
+        }
+        
+        /* Use media queries to adjust the layout for smaller screens */
+        @media only screen and (max-width: 768px) {
+            h1, p {
+                font-size: 1.5em;
+            }
+        }
+        
+        /* Use CSS grid to arrange the content in a responsive grid */
+        main {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-gap: 1em;
+        }
+        
+        /* Use media queries to adjust the grid for smaller screens */
+        @media only screen and (min-width: 768px) {
+            main {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+    
+    <title>bokeh & pandas playground</title>
+</head>
+
+<body>
+    <!-- Use a <nav> element for navigation links -->
+    <nav>
+        <a href="/">index | </a>
+        <a href="/task">task | </a>
+        <a href="/gpt">GPT | </a>
+        <a href="/dfbokeh">dfbokeh | </a> 
+        <a href="/snapshot">dfsnap | </a> 
+        <a href="/transaction">dftrx | </a> 
+        <a href="/web3table">web3  | </a> 
+        <a href="/meta">meta | </a>
+        <a href="/price">price | </a>
+    </nav>
+    
+    <main>
+        <div>
+            <h1>:)a !</h1>
+            <p>Total_all: 107,657,017.0, last updated: 2023-03-01 03:03:30.96033</p>
+            <div id="51cafe6913" data-root-id="p1001">
+                <p>Total_all: 107,657,017.0, last updated: 2023-03-01 03:03:30.96033</p>
+            </div>
+        </div>
+        <div>
+            <h1>:)2 @ </h1>
+            <p>Total_stock: 24,381,298.0, last updated: 2023-03-01 03:03:30.96033</p>
+            <div id="dasdf2ae0e4934" data-root-id="p1060">
+                <p>Total_all: 107,657,017.0, last updated: 2023-03-01 03:03:30.96033</p>
+            </div>
+        </div>
+        <div>
+            <h1>:)3 $ </h1>
+            <p>Total_crypto: 61,587,829.0, last updated: 2023-03-01 03:03:30.96033</p>
+            <div id="9bafds2f5" data-root-id="p1062">
+                <p>Total_all: 107,657,017.0, last updated: 2023-03-01 03:03:30.96033</p>
+            </div>
+        </div>
+    </main>
+
+   <!-- Import any necessary JavaScript libraries here -->
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.1.min.js"></script>
+
+    <!-- Include the JavaScript file with the Bokeh plots here -->
+    <script src="/static/js/bokeh_plots.js"></script>
+ 
+</body>
+
+</html>

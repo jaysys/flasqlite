@@ -815,6 +815,13 @@ def web3table():
         return redirect(url_for('login'))
     
 
+'''
+mobile adptive
+'''
+@app.route("/mobile")
+def mobileadaptive():
+    pass
+    return render_template('mobileadptive.html')
 
 
 if __name__ == "__main__":
