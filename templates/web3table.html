@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>My transactions</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dfstyle.css') }}">
+{% endblock %}
+
+{% block body %}
+<div align="center">
+    <h3>:) ~ web3 table</h3>
+    <table>
+      <tr>
+        <th>Blockchain n/w</th>
+        <th>Token note</th>
+        <th>Balance(q'ty)</th>
+        <th>Unit($)</th>
+        <th>Total($)</th>
+        <th>Total(₩)</th>
+      </tr>
+      {% for row in data %}
+      <tr>
+        <td>{{ row["network"] }}</td>
+        <td>{{ row["token_note"] }}</td>
+        <td>{{ '{:,.2f}'.format(row["balance"]) }}</td>
+        <td>{{ '{:,.2f}'.format(row["unit_usd"]) }}</td>
+        <td>{{ '{:,.2f}'.format(row["total_usd"]) }}</td>
+        <td>{{ '{:,.0f}'.format(row["total_krw"]) }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    <pre>{{ 'total(₩): {:,.0f}'.format(gross) }}</pre>
+</div>
+{% endblock %}
+

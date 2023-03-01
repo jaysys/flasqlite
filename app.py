@@ -491,13 +491,19 @@ def tyscript():
     return render_template('tyscript.html', data=data)
 
 
-
 '''
 metamask connect & query balance
 '''
 @app.route('/meta')
 def meta():
     return render_template('meta.html')
+
+
+from google_currency import convert
+def usd2krw(value):
+    a = convert('usd', "krw", value)
+    b = json.loads(a).get('amount')
+    return float(b)
 
 
 '''
@@ -559,9 +565,7 @@ def ethereum_eth_balance():
     eth_bal = Web3.fromWei(eth_bal, 'ether')
     eth_unit_price = crypto_unit_price("ETH")
     print(f"eth:{eth_unit_price}, balance:{eth_bal}")
-    return(eth_unit_price, eth_bal)
-
-
+    return(float(eth_bal), float(eth_unit_price))
 
 
 '''
@@ -581,7 +585,7 @@ def polygon_matic_balance():
     matic_bal = Web3.fromWei(matic_bal, 'ether')
     matic_unit_price = crypto_unit_price("MATIC")
     print(f"matic:{matic_unit_price}, balance:{matic_bal}")
-    return(matic_unit_price, matic_bal)
+    return(float(matic_bal), float(matic_unit_price))
 
 '''
 gmx on arbitrum
@@ -611,7 +615,7 @@ def gmx_balance():
     sbfgmx_bal = sbfgmx_contract.functions.balanceOf(my_address).call() / 1000000000000000000
     print(f'sbfGMX balance is {sbfgmx_bal}')
 
-    return(gmx_bal, sbfgmx_bal)
+    return(float(gmx_bal), float(sbfgmx_bal))
 
 
 
@@ -645,7 +649,7 @@ def wrapped_flare_balance():
     wsgb_bal = _contract.functions.balanceOf(my_address).call() / 1000000000000000000
     print(f'WSGB balance is {wsgb_bal}')
 
-    return(wflr_bal, wsgb_bal)
+    return(float(wflr_bal), float(wsgb_bal))
 
 
 '''
@@ -659,8 +663,8 @@ def web3start():
         username = session['username']
         print(my_address[:6]+".......")
 
-        eth_price, eth_bal = ethereum_eth_balance()
-        matic_price, matic_bal = polygon_matic_balance()
+        eth_bal, eth_price = ethereum_eth_balance()
+        matic_bal, matic_price = polygon_matic_balance()
 
         #arbitrum
         # Connect to the Arbitrum network using an RPC endpoint
@@ -713,6 +717,105 @@ def web3start():
     else:
         return redirect(url_for('login'))
 
+
+def makeframe(d0,d1,d2,d3,d4,d5):
+    # tmp1 = {
+    #     "network": "arbitrum_test",
+    #     "token_note": "arbitrum ETH(aETH)_test",
+    #     "balance": "0.009",
+    #     "unit_usd": "1,651.200",
+    #     "total_usd": "14.38",
+    #     "total_krw": "18000" }
+    # web3.data = []
+    # web3data.append(tmp1)
+    
+    tmp = {}
+    tmp["network"] = d0
+    tmp["token_note"] = d1
+    tmp["balance"] = d2
+    tmp["unit_usd"] = d3
+    tmp["total_usd"] = d4
+    tmp["total_krw"] = d5
+
+    print(tmp)
+    return (tmp)
+
+
+@app.route("/web3table")
+def web3table():
+    print(my_address[:6]+".......(web3)")
+
+    if 'username' in session:
+        username = session['username']
+        print(my_address[:6]+".......(web3data)")
+        
+        krw = usd2krw(1)
+        eth_price = crypto_unit_price("ETH")
+        matic_price = crypto_unit_price("MATIC")
+        gmx_price = crypto_unit_price("GMX")
+        flr_price = crypto_unit_price("FLR")
+        sgb_price = crypto_unit_price("SGB")
+        eth_bal, _p0 = ethereum_eth_balance()
+        matic_bal, _p1 = polygon_matic_balance()
+        
+        web3data = []
+
+        #ethereum
+        eth_data = makeframe("ethereum", "ethereum(ETH)", eth_bal, eth_price, eth_bal*eth_price, eth_bal*eth_price*krw)
+        web3data.append(eth_data)
+
+        #polygon
+        matic_data = makeframe("polygon", "polygon(MATIC)", matic_bal, matic_price, matic_bal*matic_price, matic_bal*matic_price*krw)
+        web3data.append(matic_data)
+
+        #arbitrum(aeth)
+        w3_arbi = Web3(Web3.HTTPProvider('https://arb1.arbitrum.io/rpc'))
+        address = w3_arbi.toChecksumAddress(my_address)
+        balance = w3_arbi.eth.get_balance(address)
+        aeth_bal_d = Web3.fromWei(balance, 'ether')
+        aeth_bal = float(aeth_bal_d)
+        aeth_data = makeframe("arbitrum", "arbitrum eth(aETH)", aeth_bal, eth_price, aeth_bal*eth_price, aeth_bal*eth_price*krw)
+        web3data.append(aeth_data)
+
+        #gmx, sbfgmx
+        gmx_bal, sbfgmx_bal = gmx_balance()
+        gmx_data = makeframe("arbitrum", "GMX.io(GMX)", gmx_bal, gmx_price, gmx_bal*gmx_price, gmx_bal*gmx_price*krw)
+        web3data.append(gmx_data)
+        gmx_bal, sbfgmx_bal = gmx_balance()
+        sbfgmx_data = makeframe("arbitrum", "staked gmx(sbfGMX)", sbfgmx_bal, gmx_price, sbfgmx_bal*gmx_price, sbfgmx_bal*gmx_price*krw)
+        web3data.append(sbfgmx_data)
+
+        #flare(flr,sgb and staked(wflr, wsgb)
+        w3_flare = Web3(Web3.HTTPProvider('https://flare-api.flare.network/ext/C/rpc'))
+        w3_songbird = Web3(Web3.HTTPProvider('https://sgb.ftso.com.au/ext/bc/C/rpc'))
+        address = Web3.toChecksumAddress(my_address)
+        flare_bal = w3_flare.eth.getBalance(address)
+        songbird_bal = w3_songbird.eth.getBalance(address)
+        flr_bal = float(Web3.fromWei(flare_bal, 'ether'))
+        sgb_bal = float(Web3.fromWei(songbird_bal, 'ether'))
+        wflr_bal, wsgb_bal = wrapped_flare_balance()
+
+        flare_data = makeframe("flare", "flare(FLR)", flr_bal, flr_price, flr_bal*flr_price, flr_bal*flr_price*krw)
+        web3data.append(flare_data)
+        wflr_data = makeframe("flare", "wrapped flr(WFLR)", wflr_bal, flr_price, wflr_bal*flr_price, wflr_bal*flr_price*krw)
+        web3data.append(wflr_data)        
+        sgb_data = makeframe("flare", "songbird(SGB)", sgb_bal, sgb_price, sgb_bal*sgb_price, sgb_bal*sgb_price*krw)
+        web3data.append(sgb_data)        
+        wsgb_data = makeframe("flare", "wrapped sgb(WSGB)", wsgb_bal, sgb_price, wsgb_bal*sgb_price, wsgb_bal*sgb_price*krw)
+        web3data.append(wsgb_data)
+
+        print(web3data)
+
+        total_krw_sum = 0
+        for row in web3data:
+            total_krw_sum += row["total_krw"]
+
+        return render_template("web3table.html", data=web3data, gross=total_krw_sum, username=username)
+    else:
+        return redirect(url_for('login'))
+    
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)
-

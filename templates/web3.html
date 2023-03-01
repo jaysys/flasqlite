@@ -12,11 +12,12 @@
       <h3>Address: {{ address }}</h3>
       <table>
         <tr>
-          <th>Blockchain network</th>
+          <th>Blockchain n/w</th>
           <th>Token note</th>
           <th>Balance(q'ty)</th>
           <th>Unit(usd)</th>
           <th>Total(usd)</th>
+          <th>Total(krw)</th>
         </tr>
         <tr>
           <td>arbitrum</td>
@@ -24,6 +25,7 @@
           <td>{{ aeth_balance }}</td>
           <td>{{ eth }}</td>
           <td>{{ aeth_total }}</td>
+          <td>{{ aeth_total_krw }}</td>
         </tr>
         <tr>
           <td>arbitrum</td>
@@ -31,6 +33,7 @@
           <td>{{ gmx_balance }}</td>
           <td>{{ gmx  }}</td>
           <td>{{ gmx_total }}</td>
+          <td>{{ gmx_total_krw }}</td>
         </tr>
         <tr>
           <td>arbitrum</td>
@@ -38,6 +41,7 @@
           <td>{{ sbfgmx_balance }}</td>
           <td>{{ gmx }}</td>
           <td>{{ sbfgmx_total }}</td>
+          <td>{{ sbfgmx_total_krw }}</td>
         </tr>
         <tr>
           <td>flare</td>
@@ -45,6 +49,7 @@
           <td>{{ flare_balance }}</td>
           <td>{{ flr }}</td>
           <td>{{ flr_total }}</td>
+          <td>{{ flr_total_krw }}</td>
         </tr>
         <tr>
           <td>flare</td>
@@ -52,6 +57,7 @@
           <td>{{ flare_staked }}</td>
           <td>{{ flr }}</td>
           <td>{{ wflr_total }}</td>
+          <td>{{ wflr_total_krw }}</td>
         </tr>
         <tr>
           <td>flare</td>
@@ -59,6 +65,7 @@
           <td>{{songbird_balance}}</td>
           <td>{{ sgb }}</td>
           <td>{{ sgb_total }}</td>
+          <td>{{ sgb_total_krw }}</td>
         </tr>
         <tr>
           <td>flare</td>
@@ -66,6 +73,7 @@
           <td>{{sgb_staked}}</td>
           <td>{{ sgb }}</td>
           <td>{{ wsgb_total }}</td>
+          <td>{{ wsgb_total_krw }}</td>
         </tr>
         <tr>
           <td>ethereum</td>
@@ -73,6 +81,7 @@
           <td>{{eth_bal}}</td>
           <td>{{ eth_price }}</td>
           <td>{{ eth_total }}</td>
+          <td>{{ eth_total_krw }}</td>
         </tr>
         <tr>
           <td>polygon</td>
@@ -80,6 +89,7 @@
           <td>{{matic_bal}}</td>
           <td>{{ matic_price }}</td>
           <td>{{ matic_total }}</td>
+          <td>{{ matic_total_krw }}</td>
         </tr>
 
       </table>
