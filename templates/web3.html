@@ -8,22 +8,22 @@
 {% block body %}
 <br>
 <center>
-    <h3>:) playground connecting web3:: arbitrum / flare&songbird </h3>
+    <h3>:) playground:: connecting web3 httpprovider </h3>
       <h3>Address: {{ address }}</h3>
       <table>
         <tr>
-          <th>network</th>
-          <th>token</th>
-          <th>balance</th>
-          <th>unit price</th>
-          <th>total</th>
+          <th>Blockchain network</th>
+          <th>Token note</th>
+          <th>Balance(q'ty)</th>
+          <th>Unit(usd)</th>
+          <th>Total(usd)</th>
         </tr>
         <tr>
           <td>arbitrum</td>
-          <td>arbitrum ETH(aETH))</td>
-          <td>{{ eth_balance }}</td>
+          <td>arbitrum ETH(aETH)</td>
+          <td>{{ aeth_balance }}</td>
           <td>{{ eth }}</td>
-          <td>{{ eth_total }}</td>
+          <td>{{ aeth_total }}</td>
         </tr>
         <tr>
           <td>arbitrum</td>
@@ -66,6 +66,20 @@
           <td>{{sgb_staked}}</td>
           <td>{{ sgb }}</td>
           <td>{{ wsgb_total }}</td>
+        </tr>
+        <tr>
+          <td>ethereum</td>
+          <td>ethereum(ETH)</td>
+          <td>{{eth_bal}}</td>
+          <td>{{ eth_price }}</td>
+          <td>{{ eth_total }}</td>
+        </tr>
+        <tr>
+          <td>polygon</td>
+          <td>polygon(MATIC)</td>
+          <td>{{matic_bal}}</td>
+          <td>{{ matic_price }}</td>
+          <td>{{ matic_total }}</td>
         </tr>
 
       </table>

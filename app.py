@@ -25,13 +25,12 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    if 'username' in session:
+    # if 'username' in session:
         username = session['username']
         return render_template('index.html', username=username)
-    else:
-        return redirect(url_for('login'))
+    # else:
+    #     return redirect(url_for('login'))
 
-    # return render_template('index.html',username = 'aa')
 
 
 '''
@@ -543,7 +542,46 @@ def crypto_unit_price(coin):
         return -1.0
 
 
+'''
+ethereum network
+'''
+def ethereum_eth_balance():
+    '''
+    ETH
+    '''
+    # Connect to the network using an RPC endpoint
+    w3 = Web3(Web3.HTTPProvider('https://ethereum-mainnet-rpc.allthatnode.com'))
+    # Convert the Ethereum address to checksum format
+    address = w3.toChecksumAddress(my_address)
+    # Get the balance of the address on the network
+    eth_bal = w3.eth.get_balance(address)
+    # Convert the balance values to decimal units
+    eth_bal = Web3.fromWei(eth_bal, 'ether')
+    eth_unit_price = crypto_unit_price("ETH")
+    print(f"eth:{eth_unit_price}, balance:{eth_bal}")
+    return(eth_unit_price, eth_bal)
 
+
+
+
+'''
+polygon network
+'''
+def polygon_matic_balance():
+    '''
+    MATIC
+    '''
+    # Connect to the network using an RPC endpoint
+    w3 = Web3(Web3.HTTPProvider('https://rpc-mainnet.maticvigil.com/'))
+    # Convert the Ethereum address to checksum format
+    address = w3.toChecksumAddress(my_address)
+    # Get the balance of the address on the network
+    matic_bal = w3.eth.get_balance(address)
+    # Convert the balance values to decimal units
+    matic_bal = Web3.fromWei(matic_bal, 'ether')
+    matic_unit_price = crypto_unit_price("MATIC")
+    print(f"matic:{matic_unit_price}, balance:{matic_bal}")
+    return(matic_unit_price, matic_bal)
 
 '''
 gmx on arbitrum
@@ -621,6 +659,9 @@ def web3start():
         username = session['username']
         print(my_address[:6]+".......")
 
+        eth_price, eth_bal = ethereum_eth_balance()
+        matic_price, matic_bal = polygon_matic_balance()
+
         #arbitrum
         # Connect to the Arbitrum network using an RPC endpoint
         arbitrum = Web3(Web3.HTTPProvider('https://arb1.arbitrum.io/rpc'))
@@ -629,7 +670,7 @@ def web3start():
         # Get the balance of the address on the Arbitrum network
         balance = arbitrum.eth.get_balance(address)
         # Convert the balance values to decimal units
-        eth_balance = Web3.fromWei(balance, 'ether')
+        aeth_balance = Web3.fromWei(balance, 'ether')
         gmx_bal, sbfgmx_bal = gmx_balance()
         gmx = crypto_unit_price("GMX")
         eth = crypto_unit_price("ETH")
@@ -652,8 +693,10 @@ def web3start():
         return render_template('web3.html', address=address[:6]+"......", 
                             eth="{:,.3f}".format(eth), gmx="{:,.3f}".format(gmx), 
                             flr="{:,.3f}".format(flr), sgb="{:,.3f}".format(sgb),
-                            eth_balance="{:,.3f}".format(eth_balance), 
-                            eth_total="{:,.2f}".format(float(str(eth_balance))*float(str(eth))),
+                            eth_price="{:,.3f}".format(eth_price), eth_bal="{:,.3f}".format(eth_bal), eth_total="{:,.2f}".format(float(str(eth_bal))*float(str(eth_price))),
+                            matic_price="{:,.3f}".format(matic_price), matic_bal="{:,.3f}".format(matic_bal), matic_total="{:,.2f}".format(float(str(matic_bal))*float(str(matic_price))),
+                            aeth_balance="{:,.3f}".format(aeth_balance), 
+                            aeth_total="{:,.2f}".format(float(str(aeth_balance))*float(str(eth))),
                             gmx_balance="{:,.3f}".format(gmx_bal), 
                             gmx_total="{:,.2f}".format(float(str(gmx_bal))*float(str(gmx))),
                             sbfgmx_balance="{:,.3f}".format(sbfgmx_bal), 
