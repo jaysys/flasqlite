@@ -22,6 +22,8 @@ except:
     pass
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = db_conn_string
+
 
 @app.route("/")
 def index():
@@ -41,12 +43,19 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        conn = psycopg2.connect(app.config['SQLALCHEMY_DATABASE_URI'])
-        cur = conn.cursor()
-        cur.execute('SELECT * FROM users WHERE username = %s AND password = %s', (username, password))
-        user = cur.fetchone()
-        cur.close()
-        conn.close()
+
+        # Create a SQLAlchemy engine
+        engine = create_engine(db_conn_string)
+
+        # Connect to the database using a Connection object
+        with engine.connect() as conn:
+            # Create a SQLAlchemy text object for the SQL query
+            query = text('SELECT * FROM users WHERE username = :u AND password = :p').bindparams(u=username, p=password)
+            print("@@@",query)
+            # Execute the query and fetch the first row
+            user = conn.execute(query).fetchone()
+            print("@@@",user)
+
         if user:
             session['username'] = username
             return redirect(url_for('index'))
@@ -54,7 +63,6 @@ def login():
             return render_template('login.html', error='Invalid username or password')
     else:
         return render_template('login.html')
-
 
 
 '''
@@ -75,21 +83,30 @@ def register():
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
-        conn = psycopg2.connect(app.config['SQLALCHEMY_DATABASE_URI'])
-        cur = conn.cursor()
-        cur.execute('SELECT * FROM users WHERE username = %s', (username,))
-        user = cur.fetchone()
-        if user:
-            cur.close()
-            conn.close()
-            return render_template('register.html', error='Username already exists')
-        else:
-            cur.execute('INSERT INTO users (username, password, email) VALUES (%s, %s, %s)', (username, password,email))
+
+        # Create a SQLAlchemy engine
+        engine = create_engine(db_conn_string)
+
+        # Connect to the database using a Connection object
+        with engine.connect() as conn:
+            # Create a SQLAlchemy text object for the SQL queries
+            select_query = text('SELECT * FROM users WHERE username = :u').bindparams(u=username)
+            insert_query = text('INSERT INTO users (username, password, email) VALUES (:u, :p, :e)').bindparams(u=username, p=password, e=email)
+
+            # Execute the SELECT query to check if the user exists
+            user = conn.execute(select_query).fetchone()
+
+            # Check if the user exists and return an error message
+            if user is not None:
+                return render_template('register.html', error='Username already exists')
+
+            # Execute the INSERT query to create the new user
+            conn.execute(insert_query)
             conn.commit()
-            cur.close()
-            conn.close()
-            session['username'] = username
-            return redirect(url_for('index'))
+        
+        # Set the session username and redirect to the homepage
+        session['username'] = username
+        return redirect(url_for('index'))
     else:
         return render_template('register.html')
 
@@ -238,15 +255,15 @@ def dfbokeh():
     result = conn.execute(query)
     df_div = pd.DataFrame(result.fetchall())
 
-    query = text("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset WHERE div = 'STOCK' GROUP BY timestamp, div ORDER BY timestamp desc")
+    query = text("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset WHERE `div` = 'STOCK' GROUP BY timestamp, `div` ORDER BY timestamp desc")
     result = conn.execute(query)
     df_div_stock = pd.DataFrame(result.fetchall())
 
-    query = text("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset WHERE div = 'CRYPTO' GROUP BY timestamp, div ORDER BY timestamp desc")
+    query = text("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset WHERE `div` = 'CRYPTO' GROUP BY timestamp, `div` ORDER BY timestamp desc")
     result = conn.execute(query)
     df_div_crypto = pd.DataFrame(result.fetchall())
 
-    query = text("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset WHERE div = 'CASH' GROUP BY timestamp, div ORDER BY timestamp desc")
+    query = text("SELECT timestamp as date, round(sum(total_krw)) as total FROM my_asset WHERE `div` = 'CASH' GROUP BY timestamp, `div` ORDER BY timestamp desc")
     result = conn.execute(query)
     df_div_cash = pd.DataFrame(result.fetchall())
 
@@ -377,7 +394,7 @@ def snapshot():
         engine = create_engine(db_conn_string)
         conn = engine.connect()
 
-        query = text("select to_char(timestamp::timestamp,'YYYY/Mon/DD/HH24:MI') as date, asset_note, round(sum(total_krw)) as total_krw from my_asset group by asset_note, timestamp order by timestamp desc, total_krw desc limit 14")
+        query = text("SELECT DATE_FORMAT(timestamp, '%Y/%b/%d/%H:%i') as date, asset_note, round(sum(total_krw)) as total_krw FROM my_asset GROUP BY asset_note, timestamp ORDER BY timestamp DESC, total_krw DESC LIMIT 14;")
         result = conn.execute(query)
         
         df_div = pd.DataFrame(result.fetchall())
@@ -419,14 +436,11 @@ def transaction():
         end_index = start_index + ROWS_PER_PAGE
 
         engine = create_engine(db_conn_string)
-        conn = engine.connect()
-
-        query = text("SELECT div, asset, to_char(qty,'9,999,999,999.999') as qty, to_char(total_krw,'9,999,999,999.9') as total_krw, asset_note, timestamp  FROM my_asset WHERE total_krw > 1000 ORDER BY timestamp DESC, asset_note, total_krw DESC LIMIT :rows_per_page OFFSET :start_index")
-
-        result = conn.execute(query, {"rows_per_page": ROWS_PER_PAGE, "start_index": start_index})
-        df = pd.DataFrame(result.fetchall())
-        df.columns = result.keys()
-        conn.close()
+        with engine.connect() as conn:
+            query = text("SELECT `div`, asset, FORMAT(qty, 4) as qty, FORMAT(total_krw, 2) as total_krw, asset_note, DATE_FORMAT(timestamp, '%Y.%b.%d/%H:%i') as timestamp  FROM my_asset WHERE total_krw > 1000 ORDER BY timestamp DESC, asset_note, total_krw DESC LIMIT :rows_per_page OFFSET :start_index").bindparams(rows_per_page=ROWS_PER_PAGE, start_index= start_index)
+            result = conn.execute(query)
+            df = pd.DataFrame(result.fetchall())
+            df.columns = result.keys()
 
         # Check if there are any more rows to display
         has_next_page = len(df) == ROWS_PER_PAGE
