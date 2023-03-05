@@ -614,6 +614,8 @@ def gmx_balance():
     sbfgmx_contract = w3.eth.contract(address=sbfgmx_contract_address, abi=abi)
     sbfgmx_bal = sbfgmx_contract.functions.balanceOf(my_address).call() / 1000000000000000000
     print(f'sbfGMX balance is {sbfgmx_bal}')
+    # sbfgmx_staked = sbfgmx_contract.functions.stakedAmounts(my_address).call() / 1000000000000000000
+    # print(f'sbfGMX, stakedAmounts of GMX is {sbfgmx_staked}')
 
     return(float(gmx_bal), float(sbfgmx_bal))
 
