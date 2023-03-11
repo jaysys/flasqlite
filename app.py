@@ -394,8 +394,8 @@ def snapshot():
 
         engine = create_engine(db_conn_string)
         conn = engine.connect()
-
-        query = text("SELECT DATE_FORMAT(timestamp, '%Y/%b/%d/%H:%i') as date, asset_note, round(sum(total_krw)) as total_krw FROM my_asset GROUP BY asset_note, timestamp ORDER BY timestamp DESC, total_krw DESC LIMIT 14;")
+        # query = text("SELECT DATE_FORMAT(timestamp, '%Y/%b/%d/%H:%i') as date, asset_note, round(sum(total_krw)) as total_krw FROM my_asset GROUP BY asset_note, timestamp ORDER BY timestamp DESC, total_krw DESC LIMIT 14;")
+        query = text("select DATE_FORMAT(timestamp, '%Y/%b/%d/%H:%i') as date, asset_note, round(sum(total_krw)) as total_krw from my_asset, (select max(timestamp) now from my_asset) mx where timestamp = mx.now group by timestamp, asset_note order by total_krw desc;")
         result = conn.execute(query)
         
         df_div = pd.DataFrame(result.fetchall())
