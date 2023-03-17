@@ -18,3 +18,4 @@ tornado
 openai
 web3
 google-currency
+pymysql
