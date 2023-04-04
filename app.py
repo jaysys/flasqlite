@@ -438,7 +438,7 @@ def transaction():
 
         engine = create_engine(db_conn_string)
         with engine.connect() as conn:
-            query = text("SELECT `div`, asset, FORMAT(qty, 4) as qty, FORMAT(total_krw, 2) as total_krw, asset_note, DATE_FORMAT(timestamp, '%Y.%b.%d/%H:%i') as timestamp  FROM my_asset WHERE total_krw > 1000 ORDER BY timestamp DESC, asset_note, total_krw DESC LIMIT :rows_per_page OFFSET :start_index").bindparams(rows_per_page=ROWS_PER_PAGE, start_index= start_index)
+            query = text("SELECT `div`, asset, FORMAT(qty, 4) as qty, FORMAT(total_krw, 2) as total_krw, asset_note, DATE_FORMAT(timestamp, '%Y.%b.%d/%H:%i') as timestamp  FROM my_asset WHERE total_krw > 1000 ORDER BY timestamp DESC, total_krw DESC, asset_note LIMIT :rows_per_page OFFSET :start_index").bindparams(rows_per_page=ROWS_PER_PAGE, start_index= start_index)
             result = conn.execute(query)
             df = pd.DataFrame(result.fetchall())
             df.columns = result.keys()
