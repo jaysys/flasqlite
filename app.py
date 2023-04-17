@@ -276,7 +276,7 @@ def dfbokeh():
     total = '{:,}'.format(df_div['total'][0])   #'{:,}'.format(value)
     date = (df_div['date'][0])
     print(">>total>>",rows,cols,date,total, "<<<")
-    fig = figure(width=1000, height=500 ) #, tools=[HoverTool()], tooltips="@x == @y",)
+    fig = figure(width=1500, height=500 ) #, tools=[HoverTool()], tooltips="@x == @y",)
     ax = pd.to_datetime(df_div["date"])
     ay = df_div['total'] 
     #fig.circle(ax, ay , size=1, color="black", alpha=1)#, x_axis_type="datetime")
@@ -295,7 +295,7 @@ def dfbokeh():
     total_stock = '{:,}'.format(df_div_stock['total'][0])   #'{:,}'.format(value)
     date2 = (df_div_stock['date'][0])
     print(">>stock_total>>",rows,cols,date,total_stock, "<<<")
-    fig2 = figure(width=1000, height=500 ) #, tools=[HoverTool()], tooltips="@x == @y",)
+    fig2 = figure(width=1500, height=500 ) #, tools=[HoverTool()], tooltips="@x == @y",)
     ax2 = pd.to_datetime(df_div_stock["date"])
     ay2 = df_div_stock['total'] 
     #fig2.circle(ax, ay , size=1, color="black", alpha=1)#, x_axis_type="datetime")
@@ -314,7 +314,7 @@ def dfbokeh():
     total_crypto = '{:,}'.format(df_div_crypto['total'][0])   #'{:,}'.format(value)
     date3 = (df_div_crypto['date'][0])
     print(">>stock_crypto>>",rows,cols,date3,total_crypto, "<<<")
-    fig3 = figure(width=1000, height=500 ) #, tools=[HoverTool()], tooltips="@x == @y",)
+    fig3 = figure(width=1500, height=500 ) #, tools=[HoverTool()], tooltips="@x == @y",)
     ax3 = pd.to_datetime(df_div_crypto["date"])
     ay3 = df_div_crypto['total'] 
     #fig2.circle(ax3, ay3 , size=1, color="black", alpha=1)#, x_axis_type="datetime")
@@ -332,7 +332,7 @@ def dfbokeh():
     total_cash = '{:,}'.format(df_div_cash['total'][0])   #'{:,}'.format(value)
     date4 = (df_div_cash['date'][0])
     print(">>stock_cash>>",rows,cols,date3,total_cash, "<<<")
-    fig4 = figure(width=1000, height=500 ) #, tools=[HoverTool()], tooltips="@x == @y",)
+    fig4 = figure(width=1500, height=500 ) #, tools=[HoverTool()], tooltips="@x == @y",)
     ax4 = pd.to_datetime(df_div_cash["date"])
     ay4 = df_div_cash['total'] 
     #fig4.circle(ax3, ay3 , size=1, color="black", alpha=1)#, x_axis_type="datetime")
