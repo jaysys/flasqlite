@@ -270,7 +270,7 @@ def dfbokeh():
 
     conn.close()
 
-    ### ---
+    ### -total--
     rows = df_div.shape[0]
     cols = df_div.shape[1]
     total = '{:,}'.format(df_div['total'][0])   #'{:,}'.format(value)
@@ -289,7 +289,26 @@ def dfbokeh():
     #fig.sizing_mode = 'scale_width'
  
 
-    ### ---
+    ### -crypto--
+    rows = df_div_crypto.shape[0]
+    cols = df_div_crypto.shape[1]
+    total_crypto = '{:,}'.format(df_div_crypto['total'][0])   #'{:,}'.format(value)
+    date3 = (df_div_crypto['date'][0])
+    print(">>stock_crypto>>",rows,cols,date3,total_crypto, "<<<")
+    fig3 = figure(width=1500, height=500 ) #, tools=[HoverTool()], tooltips="@x == @y",)
+    ax3 = pd.to_datetime(df_div_crypto["date"])
+    ay3 = df_div_crypto['total'] 
+    #fig2.circle(ax3, ay3 , size=1, color="black", alpha=1)#, x_axis_type="datetime")
+    fig3.line(ax3, ay3, color="green", alpha=1)#, x_axis_type="datetime")
+    fig3.yaxis[0].formatter = NumeralTickFormatter(format="0,0")
+    fig3.xaxis[0].formatter = DatetimeTickFormatter(months="%F")
+    #fig3.xgrid.grid_line_color = "olive"
+    fig3.ygrid.band_fill_color = "olive"
+    fig3.ygrid.band_fill_alpha = 0.1
+    #fig3.sizing_mode = 'scale_width'
+
+
+    ### -stock--
     rows = df_div_stock.shape[0]
     cols = df_div_stock.shape[1]
     total_stock = '{:,}'.format(df_div_stock['total'][0])   #'{:,}'.format(value)
@@ -308,25 +327,7 @@ def dfbokeh():
     #fig2.sizing_mode = 'scale_width'
 
 
-    ### ---
-    rows = df_div_crypto.shape[0]
-    cols = df_div_crypto.shape[1]
-    total_crypto = '{:,}'.format(df_div_crypto['total'][0])   #'{:,}'.format(value)
-    date3 = (df_div_crypto['date'][0])
-    print(">>stock_crypto>>",rows,cols,date3,total_crypto, "<<<")
-    fig3 = figure(width=1500, height=500 ) #, tools=[HoverTool()], tooltips="@x == @y",)
-    ax3 = pd.to_datetime(df_div_crypto["date"])
-    ay3 = df_div_crypto['total'] 
-    #fig2.circle(ax3, ay3 , size=1, color="black", alpha=1)#, x_axis_type="datetime")
-    fig3.line(ax3, ay3, color="green", alpha=1)#, x_axis_type="datetime")
-    fig3.yaxis[0].formatter = NumeralTickFormatter(format="0,0")
-    fig3.xaxis[0].formatter = DatetimeTickFormatter(months="%F")
-    #fig3.xgrid.grid_line_color = "olive"
-    fig3.ygrid.band_fill_color = "olive"
-    fig3.ygrid.band_fill_alpha = 0.1
-    #fig3.sizing_mode = 'scale_width'
-
-    ### ---
+    ### -cash--
     rows = df_div_cash.shape[0]
     cols = df_div_cash.shape[1]
     total_cash = '{:,}'.format(df_div_cash['total'][0])   #'{:,}'.format(value)
